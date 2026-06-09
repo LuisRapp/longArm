@@ -341,12 +341,6 @@
           </a>
         </li>
         <li>
-          <a href="#" onclick="showSection('trazabilidad'); return false;" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/10">
-            <i class="fa-solid fa-route w-5 text-center"></i>
-            <span class="font-medium">Trazabilidad</span>
-          </a>
-        </li>
-        <li>
           <a href="#" onclick="showSection('comprobante'); return false;" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/10">
             <i class="fa-solid fa-file-invoice w-5 text-center"></i>
             <span class="font-medium">Comprobantes</span>
@@ -1139,412 +1133,6 @@
         </div>
       </section>
 
-      <!-- ==================== TRAZABILIDAD SECTION ==================== -->
-      <section id="trazabilidad" class="hidden space-y-6">
-        <div class="mb-6">
-          <h2 class="font-display text-2xl font-bold text-primary">Trazabilidad del Lote</h2>
-          <p class="text-sm text-text-muted mt-1">Consultá el historial completo de un lote</p>
-        </div>
-
-        <!-- Search Bar -->
-        <div class="bg-white rounded-xl shadow-sm border border-border p-6">
-          <div class="flex flex-col sm:flex-row gap-4">
-            <div class="relative flex-1">
-              <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-text-muted"></i>
-              <input type="text" value="2025-001" class="w-full pl-12 pr-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Buscar por N° de Lote o Cliente...">
-            </div>
-            <button class="bg-primary text-white px-8 py-3 rounded-xl font-medium hover:bg-primary-light transition-all duration-200 active:scale-95 shadow-md flex items-center justify-center gap-2">
-              <i class="fa-solid fa-search"></i>
-              Consultar
-            </button>
-          </div>
-        </div>
-
-        <!-- Result Area -->
-        <div class="space-y-6">
-          <!-- Lote Info Card -->
-          <div class="bg-white rounded-xl shadow-md border border-border p-6">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-              <div class="flex items-center gap-4">
-                <div class="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center">
-                  <i class="fa-solid fa-box-open text-3xl text-primary"></i>
-                </div>
-                <div>
-                  <h3 class="font-display text-2xl font-bold text-primary">Lote #2025-001</h3>
-                  <p class="text-text-muted">Cliente: <span class="font-medium text-text-dark">Juan Pérez</span></p>
-                </div>
-              </div>
-              <div class="text-right">
-                <p class="text-sm text-text-muted">Fecha de Ingreso</p>
-                <p class="text-lg font-semibold text-text-dark">01/06/2025</p>
-              </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-border">
-              <div class="text-center p-4 bg-gray-50 rounded-lg">
-                <p class="text-sm text-text-muted">Peso Neto Inicial</p>
-                <p class="text-xl font-bold text-primary">15.200 kg</p>
-              </div>
-              <div class="text-center p-4 bg-gray-50 rounded-lg">
-                <p class="text-sm text-text-muted">Peso Actual Estimado</p>
-                <p class="text-xl font-bold text-accent">12.800 kg</p>
-              </div>
-              <div class="text-center p-4 bg-gray-50 rounded-lg">
-                <p class="text-sm text-text-muted">Pérdida Total</p>
-                <p class="text-xl font-bold text-red-600">2.400 kg (15.8%)</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Timeline Stepper -->
-          <div class="bg-white rounded-xl shadow-md border border-border p-6">
-            <h3 class="font-display text-lg font-bold text-primary mb-6">Progreso del Lote</h3>
-            <div class="relative">
-              <!-- Desktop: Horizontal Stepper -->
-              <div class="hidden md:grid grid-cols-5 gap-4">
-                <!-- Step 1: Recepción (Completed) -->
-                <div class="relative text-center">
-                  <div class="w-12 h-12 mx-auto bg-primary rounded-full flex items-center justify-center text-white mb-3 relative z-10">
-                    <i class="fa-solid fa-check"></i>
-                  </div>
-                  <h4 class="font-semibold text-sm text-text-dark">Recepción</h4>
-                  <p class="text-xs text-text-muted mt-1">01/06/2025</p>
-                  <p class="text-xs text-text-muted">15.200 kg</p>
-                  <div class="absolute top-6 left-1/2 w-full h-0.5 bg-primary -z-0" style="transform: translateX(50%);"></div>
-                </div>
-
-                <!-- Step 2: Sapecado (Completed) -->
-                <div class="relative text-center">
-                  <div class="w-12 h-12 mx-auto bg-primary rounded-full flex items-center justify-center text-white mb-3 relative z-10">
-                    <i class="fa-solid fa-check"></i>
-                  </div>
-                  <h4 class="font-semibold text-sm text-text-dark">Sapecado</h4>
-                  <p class="text-xs text-text-muted mt-1">02/06 - 03/06/2025</p>
-                  <p class="text-xs text-green-600 font-medium">14.800 kg</p>
-                  <p class="text-xs text-text-muted">Pérdida: 400 kg</p>
-                  <div class="absolute top-6 left-1/2 w-full h-0.5 bg-primary -z-0" style="transform: translateX(50%);"></div>
-                </div>
-
-                <!-- Step 3: Secado (Completed) -->
-                <div class="relative text-center">
-                  <div class="w-12 h-12 mx-auto bg-primary rounded-full flex items-center justify-center text-white mb-3 relative z-10">
-                    <i class="fa-solid fa-check"></i>
-                  </div>
-                  <h4 class="font-semibold text-sm text-text-dark">Secado</h4>
-                  <p class="text-xs text-text-muted mt-1">03/06 - 05/06/2025</p>
-                  <p class="text-xs text-green-600 font-medium">13.500 kg</p>
-                  <p class="text-xs text-text-muted">Pérdida: 1.300 kg</p>
-                  <div class="absolute top-6 left-1/2 w-full h-0.5 bg-primary -z-0" style="transform: translateX(50%);"></div>
-                </div>
-
-                <!-- Step 4: Molienda (Current) -->
-                <div class="relative text-center">
-                  <div class="w-12 h-12 mx-auto bg-white border-4 border-primary rounded-full flex items-center justify-center text-primary mb-3 relative z-10 pulse-ring">
-                    <i class="fa-solid fa-gear fa-spin" style="animation-duration: 3s;"></i>
-                  </div>
-                  <h4 class="font-semibold text-sm text-primary">Molienda</h4>
-                  <p class="text-xs text-text-muted mt-1">05/06/2025 - Actual</p>
-                  <p class="text-xs text-accent font-medium">13.500 kg</p>
-                  <div class="absolute top-6 left-1/2 w-full h-0.5 bg-border -z-0" style="transform: translateX(50%);"></div>
-                </div>
-
-                <!-- Step 5: Envío (Pending) -->
-                <div class="relative text-center">
-                  <div class="w-12 h-12 mx-auto bg-gray-100 border-4 border-gray-300 rounded-full flex items-center justify-center text-gray-400 mb-3 relative z-10">
-                    <i class="fa-solid fa-truck"></i>
-                  </div>
-                  <h4 class="font-semibold text-sm text-gray-400">Envío</h4>
-                  <p class="text-xs text-text-muted mt-1">Pendiente</p>
-                  <p class="text-xs text-text-muted">Estimado: 12.800 kg</p>
-                </div>
-              </div>
-
-              <!-- Mobile: Vertical Stepper -->
-              <div class="md:hidden space-y-6">
-                <div class="flex gap-4">
-                  <div class="flex flex-col items-center">
-                    <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white flex-shrink-0">
-                      <i class="fa-solid fa-check text-sm"></i>
-                    </div>
-                    <div class="w-0.5 h-full bg-primary mt-2"></div>
-                  </div>
-                  <div class="pb-6">
-                    <h4 class="font-semibold text-sm text-text-dark">Recepción</h4>
-                    <p class="text-xs text-text-muted">01/06/2025 | 15.200 kg</p>
-                  </div>
-                </div>
-                <div class="flex gap-4">
-                  <div class="flex flex-col items-center">
-                    <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white flex-shrink-0">
-                      <i class="fa-solid fa-check text-sm"></i>
-                    </div>
-                    <div class="w-0.5 h-full bg-primary mt-2"></div>
-                  </div>
-                  <div class="pb-6">
-                    <h4 class="font-semibold text-sm text-text-dark">Sapecado</h4>
-                    <p class="text-xs text-text-muted">02/06 - 03/06/2025 | 14.800 kg</p>
-                    <p class="text-xs text-text-muted">Pérdida: 400 kg</p>
-                  </div>
-                </div>
-                <div class="flex gap-4">
-                  <div class="flex flex-col items-center">
-                    <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white flex-shrink-0">
-                      <i class="fa-solid fa-check text-sm"></i>
-                    </div>
-                    <div class="w-0.5 h-full bg-primary mt-2"></div>
-                  </div>
-                  <div class="pb-6">
-                    <h4 class="font-semibold text-sm text-text-dark">Secado</h4>
-                    <p class="text-xs text-text-muted">03/06 - 05/06/2025 | 13.500 kg</p>
-                    <p class="text-xs text-text-muted">Pérdida: 1.300 kg</p>
-                  </div>
-                </div>
-                <div class="flex gap-4">
-                  <div class="flex flex-col items-center">
-                    <div class="w-10 h-10 bg-white border-4 border-primary rounded-full flex items-center justify-center text-primary flex-shrink-0 pulse-ring">
-                      <i class="fa-solid fa-gear fa-spin text-sm" style="animation-duration: 3s;"></i>
-                    </div>
-                    <div class="w-0.5 h-full bg-border mt-2"></div>
-                  </div>
-                  <div class="pb-6">
-                    <h4 class="font-semibold text-sm text-primary">Molienda (Actual)</h4>
-                    <p class="text-xs text-text-muted">05/06/2025 - Actual | 13.500 kg</p>
-                  </div>
-                </div>
-                <div class="flex gap-4">
-                  <div class="flex flex-col items-center">
-                    <div class="w-10 h-10 bg-gray-100 border-4 border-gray-300 rounded-full flex items-center justify-center text-gray-400 flex-shrink-0">
-                      <i class="fa-solid fa-truck text-sm"></i>
-                    </div>
-                  </div>
-                  <div>
-                    <h4 class="font-semibold text-sm text-gray-400">Envío</h4>
-                    <p class="text-xs text-text-muted">Pendiente | Estimado: 12.800 kg</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-8 pt-6 border-t border-border flex justify-center">
-              <button onclick="toggleHistorialCompleto()" id="btnHistorialCompleto" class="bg-secondary text-white px-6 py-3 rounded-xl font-medium hover:bg-primary transition-all duration-200 shadow-md flex items-center gap-2">
-                <i class="fa-solid fa-clock-rotate-left"></i>
-                Ver Historial Completo
-              </button>
-            </div>
-
-            <!-- Detailed Timeline View -->
-            <div id="historialCompleto" class="hidden mt-8 pt-6 border-t border-border">
-              <h3 class="font-display text-lg font-bold text-primary mb-6">Historial Completo del Lote</h3>
-              <div class="space-y-4">
-                <!-- Stage 1: Recepción -->
-                <div class="bg-white rounded-xl border border-border p-5 shadow-sm hover-lift">
-                  <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white flex-shrink-0">
-                      <i class="fa-solid fa-check"></i>
-                    </div>
-                    <div class="flex-1">
-                      <div class="flex items-center justify-between mb-2">
-                        <h4 class="font-semibold text-text-dark">Recepción</h4>
-                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Completado</span>
-                      </div>
-                      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-                        <div>
-                          <p class="text-text-muted text-xs">Inicio</p>
-                          <p class="font-medium text-text-dark">01/06/2025</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Fin</p>
-                          <p class="font-medium text-text-dark">01/06/2025</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Duración</p>
-                          <p class="font-medium text-text-dark">1 día</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Peso Inicial</p>
-                          <p class="font-medium text-text-dark">15.200 kg</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Peso Final</p>
-                          <p class="font-medium text-text-dark">15.200 kg</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Pérdida Estimada</p>
-                          <p class="font-medium text-green-600">0 kg (0%)</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Stage 2: Sapecado -->
-                <div class="bg-white rounded-xl border border-border p-5 shadow-sm hover-lift">
-                  <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white flex-shrink-0">
-                      <i class="fa-solid fa-check"></i>
-                    </div>
-                    <div class="flex-1">
-                      <div class="flex items-center justify-between mb-2">
-                        <h4 class="font-semibold text-text-dark">Sapecado</h4>
-                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Completado</span>
-                      </div>
-                      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-                        <div>
-                          <p class="text-text-muted text-xs">Inicio</p>
-                          <p class="font-medium text-text-dark">02/06/2025</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Fin</p>
-                          <p class="font-medium text-text-dark">03/06/2025</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Duración</p>
-                          <p class="font-medium text-text-dark">2 días</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Peso Inicial</p>
-                          <p class="font-medium text-text-dark">15.200 kg</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Peso Final</p>
-                          <p class="font-medium text-text-dark">14.800 kg</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Pérdida Estimada</p>
-                          <p class="font-medium text-red-600">400 kg (2.6%)</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Stage 3: Secado -->
-                <div class="bg-white rounded-xl border border-border p-5 shadow-sm hover-lift">
-                  <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white flex-shrink-0">
-                      <i class="fa-solid fa-check"></i>
-                    </div>
-                    <div class="flex-1">
-                      <div class="flex items-center justify-between mb-2">
-                        <h4 class="font-semibold text-text-dark">Secado</h4>
-                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Completado</span>
-                      </div>
-                      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-                        <div>
-                          <p class="text-text-muted text-xs">Inicio</p>
-                          <p class="font-medium text-text-dark">03/06/2025</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Fin</p>
-                          <p class="font-medium text-text-dark">05/06/2025</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Duración</p>
-                          <p class="font-medium text-text-dark">3 días</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Peso Inicial</p>
-                          <p class="font-medium text-text-dark">14.800 kg</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Peso Final</p>
-                          <p class="font-medium text-text-dark">13.500 kg</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Pérdida Estimada</p>
-                          <p class="font-medium text-red-600">1.300 kg (8.8%)</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Stage 4: Molienda -->
-                <div class="bg-white rounded-xl border border-border p-5 shadow-sm hover-lift">
-                  <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 bg-white border-4 border-primary rounded-full flex items-center justify-center text-primary flex-shrink-0 pulse-ring">
-                      <i class="fa-solid fa-gear fa-spin" style="animation-duration: 3s;"></i>
-                    </div>
-                    <div class="flex-1">
-                      <div class="flex items-center justify-between mb-2">
-                        <h4 class="font-semibold text-primary">Molienda</h4>
-                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">En Curso</span>
-                      </div>
-                      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-                        <div>
-                          <p class="text-text-muted text-xs">Inicio</p>
-                          <p class="font-medium text-text-dark">05/06/2025</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Fin</p>
-                          <p class="font-medium text-text-dark">—</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Duración</p>
-                          <p class="font-medium text-text-dark">4 días</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Peso Inicial</p>
-                          <p class="font-medium text-text-dark">13.500 kg</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Peso Actual</p>
-                          <p class="font-medium text-text-dark">13.500 kg</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Pérdida Estimada</p>
-                          <p class="font-medium text-text-muted">0 kg (0%)</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Stage 5: Envío -->
-                <div class="bg-white rounded-xl border border-border p-5 shadow-sm hover-lift opacity-60">
-                  <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 bg-gray-100 border-4 border-gray-300 rounded-full flex items-center justify-center text-gray-400 flex-shrink-0">
-                      <i class="fa-solid fa-truck"></i>
-                    </div>
-                    <div class="flex-1">
-                      <div class="flex items-center justify-between mb-2">
-                        <h4 class="font-semibold text-gray-400">Envío</h4>
-                        <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-medium">Pendiente</span>
-                      </div>
-                      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-                        <div>
-                          <p class="text-text-muted text-xs">Inicio</p>
-                          <p class="font-medium text-text-dark">—</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Fin</p>
-                          <p class="font-medium text-text-dark">—</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Duración</p>
-                          <p class="font-medium text-text-dark">—</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Peso Inicial</p>
-                          <p class="font-medium text-text-dark">—</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Peso Estimado</p>
-                          <p class="font-medium text-text-dark">12.800 kg</p>
-                        </div>
-                        <div>
-                          <p class="text-text-muted text-xs">Pérdida Estimada</p>
-                          <p class="font-medium text-text-muted">700 kg (5.2%)</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <!-- ==================== COMPROBANTE SECTION ==================== -->
       <section id="comprobante" class="hidden space-y-6">
         <div class="mb-6">
@@ -1731,6 +1319,27 @@
     </div>
   </div>
 
+  <!-- Trazabilidad Modal (reusable) -->
+  <div id="trazabilidadModal" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" onclick="toggleModal('trazabilidadModal')"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto relative z-10">
+        <div class="p-6 border-b border-border flex items-center justify-between sticky top-0 bg-white rounded-t-2xl">
+          <div>
+            <h3 id="trazModalTitle" class="font-display text-xl font-bold text-primary"></h3>
+            <p id="trazModalCliente" class="text-sm text-text-muted"></p>
+          </div>
+          <button onclick="toggleModal('trazabilidadModal')" class="p-2 rounded-lg hover:bg-gray-100 transition-colors text-text-muted">
+            <i class="fa-solid fa-xmark text-xl"></i>
+          </button>
+        </div>
+        <div class="p-6">
+          <div id="trazModalContent" class="space-y-4"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================== JAVASCRIPT ==================== -->
   <script>
     // Navigation state
@@ -1784,7 +1393,7 @@
       document.getElementById('mainContent').classList.add('hidden');
       document.getElementById('mobileHeader').classList.add('hidden');
       // Hide all sections inside main
-      const sections = ['dashboard', 'clientes', 'registro-lote', 'listado-lotes', 'trazabilidad', 'comprobante'];
+      const sections = ['dashboard', 'clientes', 'registro-lote', 'listado-lotes', 'comprobante'];
       sections.forEach(id => {
         document.getElementById(id).classList.add('hidden');
       });
@@ -1796,7 +1405,7 @@
     // Show specific section
     function showSection(sectionId) {
       // Hide all sections
-      const sections = ['dashboard', 'clientes', 'registro-lote', 'listado-lotes', 'trazabilidad', 'comprobante'];
+      const sections = ['dashboard', 'clientes', 'registro-lote', 'listado-lotes', 'comprobante'];
       sections.forEach(id => {
         document.getElementById(id).classList.add('hidden');
       });
@@ -1810,7 +1419,6 @@
         'clientes': 'Gestión de Clientes',
         'registro-lote': 'Registro de Lote',
         'listado-lotes': 'Listado de Lotes',
-        'trazabilidad': 'Trazabilidad',
         'comprobante': 'Comprobantes'
       };
       document.getElementById('pageTitle').textContent = titles[sectionId] || '';
@@ -1867,6 +1475,180 @@
     document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('login').classList.remove('hidden');
     });
+
+    // ==================== TRAZABILIDAD MODAL ====================
+    const lotTraceData = {
+      '2025-001': { cliente: 'Juan Pérez', fecha: '01/06/2025', pesoInicial: '15.200 kg', pesoActual: '13.500 kg', perdida: '1.700 kg (11.2%)',
+        etapas: [
+          { nombre: 'Recepción', inicio: '01/06/2025', fin: '01/06/2025', pesoInicio: '15.200', pesoFin: '15.200', perdida: '0 kg (0%)', duracion: '1 día', status: 'completado' },
+          { nombre: 'Sapecado', inicio: '02/06/2025', fin: '03/06/2025', pesoInicio: '15.200', pesoFin: '14.800', perdida: '400 kg (2.6%)', duracion: '2 días', status: 'completado' },
+          { nombre: 'Secado', inicio: '03/06/2025', fin: '05/06/2025', pesoInicio: '14.800', pesoFin: '13.500', perdida: '1.300 kg (8.8%)', duracion: '3 días', status: 'completado' },
+          { nombre: 'Molienda', inicio: '05/06/2025', fin: '—', pesoInicio: '13.500', pesoFin: '13.500', perdida: '0 kg (0%)', duracion: '4 días', status: 'actual' },
+          { nombre: 'Envío', inicio: '—', fin: '—', pesoInicio: '—', pesoFin: '12.800', perdida: '700 kg (5.2%)', duracion: '—', status: 'pendiente' }
+        ]
+      },
+      '2026-042': { cliente: 'Juan Pérez', fecha: '09/06/2026', pesoInicial: '15.700 kg', pesoActual: '15.700 kg', perdida: '0 kg (0%)',
+        etapas: [
+          { nombre: 'Recepción', inicio: '09/06/2026', fin: '09/06/2026', pesoInicio: '15.700', pesoFin: '15.700', perdida: '0 kg (0%)', duracion: '1 día', status: 'completado' },
+          { nombre: 'Sapecado', inicio: '—', fin: '—', pesoInicio: '—', pesoFin: '—', perdida: '—', duracion: '—', status: 'pendiente' },
+          { nombre: 'Secado', inicio: '—', fin: '—', pesoInicio: '—', pesoFin: '—', perdida: '—', duracion: '—', status: 'pendiente' },
+          { nombre: 'Molienda', inicio: '—', fin: '—', pesoInicio: '—', pesoFin: '—', perdida: '—', duracion: '—', status: 'pendiente' },
+          { nombre: 'Envío', inicio: '—', fin: '—', pesoInicio: '—', pesoFin: '—', perdida: '—', duracion: '—', status: 'pendiente' }
+        ]
+      },
+      '2026-041': { cliente: 'María González', fecha: '08/06/2026', pesoInicial: '8.500 kg', pesoActual: '8.500 kg', perdida: '0 kg (0%)',
+        etapas: [
+          { nombre: 'Recepción', inicio: '08/06/2026', fin: '08/06/2026', pesoInicio: '8.500', pesoFin: '8.500', perdida: '0 kg (0%)', duracion: '1 día', status: 'completado' },
+          { nombre: 'Sapecado', inicio: '—', fin: '—', pesoInicio: '—', pesoFin: '—', perdida: '—', duracion: '—', status: 'pendiente' },
+          { nombre: 'Secado', inicio: '—', fin: '—', pesoInicio: '—', pesoFin: '—', perdida: '—', duracion: '—', status: 'pendiente' },
+          { nombre: 'Molienda', inicio: '—', fin: '—', pesoInicio: '—', pesoFin: '—', perdida: '—', duracion: '—', status: 'pendiente' },
+          { nombre: 'Envío', inicio: '—', fin: '—', pesoInicio: '—', pesoFin: '—', perdida: '—', duracion: '—', status: 'pendiente' }
+        ]
+      },
+      '2026-040': { cliente: 'Roberto Silva', fecha: '08/06/2026', pesoInicial: '12.300 kg', pesoActual: '12.100 kg', perdida: '200 kg (1.6%)',
+        etapas: [
+          { nombre: 'Recepción', inicio: '08/06/2026', fin: '08/06/2026', pesoInicio: '12.300', pesoFin: '12.300', perdida: '0 kg (0%)', duracion: '1 día', status: 'completado' },
+          { nombre: 'Sapecado', inicio: '08/06/2026', fin: '—', pesoInicio: '12.300', pesoFin: '12.100', perdida: '200 kg (1.6%)', duracion: '1 día', status: 'actual' },
+          { nombre: 'Secado', inicio: '—', fin: '—', pesoInicio: '—', pesoFin: '—', perdida: '—', duracion: '—', status: 'pendiente' },
+          { nombre: 'Molienda', inicio: '—', fin: '—', pesoInicio: '—', pesoFin: '—', perdida: '—', duracion: '—', status: 'pendiente' },
+          { nombre: 'Envío', inicio: '—', fin: '—', pesoInicio: '—', pesoFin: '—', perdida: '—', duracion: '—', status: 'pendiente' }
+        ]
+      },
+      '2026-039': { cliente: 'Carlos Martínez', fecha: '07/06/2026', pesoInicial: '18.200 kg', pesoActual: '17.800 kg', perdida: '400 kg (2.2%)',
+        etapas: [
+          { nombre: 'Recepción', inicio: '07/06/2026', fin: '07/06/2026', pesoInicio: '18.200', pesoFin: '18.200', perdida: '0 kg (0%)', duracion: '1 día', status: 'completado' },
+          { nombre: 'Sapecado', inicio: '07/06/2026', fin: '08/06/2026', pesoInicio: '18.200', pesoFin: '17.800', perdida: '400 kg (2.2%)', duracion: '2 días', status: 'completado' },
+          { nombre: 'Secado', inicio: '08/06/2026', fin: '—', pesoInicio: '17.800', pesoFin: '17.800', perdida: '0 kg (0%)', duracion: '1 día', status: 'actual' },
+          { nombre: 'Molienda', inicio: '—', fin: '—', pesoInicio: '—', pesoFin: '—', perdida: '—', duracion: '—', status: 'pendiente' },
+          { nombre: 'Envío', inicio: '—', fin: '—', pesoInicio: '—', pesoFin: '—', perdida: '—', duracion: '—', status: 'pendiente' }
+        ]
+      },
+      '2026-038': { cliente: 'Ana López', fecha: '07/06/2026', pesoInicial: '9.800 kg', pesoActual: '9.200 kg', perdida: '600 kg (6.1%)',
+        etapas: [
+          { nombre: 'Recepción', inicio: '07/06/2026', fin: '07/06/2026', pesoInicio: '9.800', pesoFin: '9.800', perdida: '0 kg (0%)', duracion: '1 día', status: 'completado' },
+          { nombre: 'Sapecado', inicio: '07/06/2026', fin: '08/06/2026', pesoInicio: '9.800', pesoFin: '9.500', perdida: '300 kg (3.1%)', duracion: '2 días', status: 'completado' },
+          { nombre: 'Secado', inicio: '08/06/2026', fin: '—', pesoInicio: '9.500', pesoFin: '9.200', perdida: '300 kg (3.2%)', duracion: '1 día', status: 'actual' },
+          { nombre: 'Molienda', inicio: '—', fin: '—', pesoInicio: '—', pesoFin: '—', perdida: '—', duracion: '—', status: 'pendiente' },
+          { nombre: 'Envío', inicio: '—', fin: '—', pesoInicio: '—', pesoFin: '—', perdida: '—', duracion: '—', status: 'pendiente' }
+        ]
+      },
+      '2026-037': { cliente: 'Pedro Sánchez', fecha: '06/06/2026', pesoInicial: '22.100 kg', pesoActual: '21.000 kg', perdida: '1.100 kg (5.0%)',
+        etapas: [
+          { nombre: 'Recepción', inicio: '06/06/2026', fin: '06/06/2026', pesoInicio: '22.100', pesoFin: '22.100', perdida: '0 kg (0%)', duracion: '1 día', status: 'completado' },
+          { nombre: 'Sapecado', inicio: '06/06/2026', fin: '07/06/2026', pesoInicio: '22.100', pesoFin: '21.500', perdida: '600 kg (2.7%)', duracion: '2 días', status: 'completado' },
+          { nombre: 'Secado', inicio: '07/06/2026', fin: '09/06/2026', pesoInicio: '21.500', pesoFin: '21.000', perdida: '500 kg (2.3%)', duracion: '3 días', status: 'completado' },
+          { nombre: 'Molienda', inicio: '09/06/2026', fin: '—', pesoInicio: '21.000', pesoFin: '21.000', perdida: '0 kg (0%)', duracion: '1 día', status: 'actual' },
+          { nombre: 'Envío', inicio: '—', fin: '—', pesoInicio: '—', pesoFin: '—', perdida: '—', duracion: '—', status: 'pendiente' }
+        ]
+      },
+      '2026-036': { cliente: 'Diego Torres', fecha: '05/06/2026', pesoInicial: '11.500 kg', pesoActual: '10.900 kg', perdida: '600 kg (5.2%)',
+        etapas: [
+          { nombre: 'Recepción', inicio: '05/06/2026', fin: '05/06/2026', pesoInicio: '11.500', pesoFin: '11.500', perdida: '0 kg (0%)', duracion: '1 día', status: 'completado' },
+          { nombre: 'Sapecado', inicio: '05/06/2026', fin: '06/06/2026', pesoInicio: '11.500', pesoFin: '11.200', perdida: '300 kg (2.6%)', duracion: '2 días', status: 'completado' },
+          { nombre: 'Secado', inicio: '06/06/2026', fin: '07/06/2026', pesoInicio: '11.200', pesoFin: '10.900', perdida: '300 kg (2.7%)', duracion: '2 días', status: 'completado' },
+          { nombre: 'Molienda', inicio: '07/06/2026', fin: '—', pesoInicio: '10.900', pesoFin: '10.900', perdida: '0 kg (0%)', duracion: '3 días', status: 'actual' },
+          { nombre: 'Envío', inicio: '—', fin: '—', pesoInicio: '—', pesoFin: '—', perdida: '—', duracion: '—', status: 'pendiente' }
+        ]
+      },
+      '2026-035': { cliente: 'Laura Fernández', fecha: '04/06/2026', pesoInicial: '14.000 kg', pesoActual: '13.200 kg', perdida: '800 kg (5.7%)',
+        etapas: [
+          { nombre: 'Recepción', inicio: '04/06/2026', fin: '04/06/2026', pesoInicio: '14.000', pesoFin: '14.000', perdida: '0 kg (0%)', duracion: '1 día', status: 'completado' },
+          { nombre: 'Sapecado', inicio: '04/06/2026', fin: '05/06/2026', pesoInicio: '14.000', pesoFin: '13.600', perdida: '400 kg (2.9%)', duracion: '2 días', status: 'completado' },
+          { nombre: 'Secado', inicio: '05/06/2026', fin: '06/06/2026', pesoInicio: '13.600', pesoFin: '13.200', perdida: '400 kg (2.9%)', duracion: '2 días', status: 'completado' },
+          { nombre: 'Molienda', inicio: '06/06/2026', fin: '—', pesoInicio: '13.200', pesoFin: '13.200', perdida: '0 kg (0%)', duracion: '4 días', status: 'actual' },
+          { nombre: 'Envío', inicio: '—', fin: '—', pesoInicio: '—', pesoFin: '—', perdida: '—', duracion: '—', status: 'pendiente' }
+        ]
+      },
+      '2026-034': { cliente: 'Sofía Ramírez', fecha: '03/06/2026', pesoInicial: '7.800 kg', pesoActual: '7.000 kg', perdida: '800 kg (10.3%)',
+        etapas: [
+          { nombre: 'Recepción', inicio: '03/06/2026', fin: '03/06/2026', pesoInicio: '7.800', pesoFin: '7.800', perdida: '0 kg (0%)', duracion: '1 día', status: 'completado' },
+          { nombre: 'Sapecado', inicio: '03/06/2026', fin: '04/06/2026', pesoInicio: '7.800', pesoFin: '7.500', perdida: '300 kg (3.8%)', duracion: '2 días', status: 'completado' },
+          { nombre: 'Secado', inicio: '04/06/2026', fin: '05/06/2026', pesoInicio: '7.500', pesoFin: '7.100', perdida: '400 kg (5.3%)', duracion: '2 días', status: 'completado' },
+          { nombre: 'Molienda', inicio: '05/06/2026', fin: '06/06/2026', pesoInicio: '7.100', pesoFin: '7.000', perdida: '100 kg (1.4%)', duracion: '2 días', status: 'completado' },
+          { nombre: 'Envío', inicio: '06/06/2026', fin: '—', pesoInicio: '7.000', pesoFin: '7.000', perdida: '0 kg (0%)', duracion: '3 días', status: 'actual' }
+        ]
+      },
+      '2026-033': { cliente: 'Juan Pérez', fecha: '02/06/2026', pesoInicial: '15.200 kg', pesoActual: '13.500 kg', perdida: '1.700 kg (11.2%)',
+        etapas: [
+          { nombre: 'Recepción', inicio: '02/06/2026', fin: '02/06/2026', pesoInicio: '15.200', pesoFin: '15.200', perdida: '0 kg (0%)', duracion: '1 día', status: 'completado' },
+          { nombre: 'Sapecado', inicio: '02/06/2026', fin: '04/06/2026', pesoInicio: '15.200', pesoFin: '14.600', perdida: '600 kg (3.9%)', duracion: '3 días', status: 'completado' },
+          { nombre: 'Secado', inicio: '04/06/2026', fin: '06/06/2026', pesoInicio: '14.600', pesoFin: '13.500', perdida: '1.100 kg (7.5%)', duracion: '3 días', status: 'completado' },
+          { nombre: 'Molienda', inicio: '06/06/2026', fin: '—', pesoInicio: '13.500', pesoFin: '13.500', perdida: '0 kg (0%)', duracion: '3 días', status: 'actual' },
+          { nombre: 'Envío', inicio: '—', fin: '—', pesoInicio: '—', pesoFin: '—', perdida: '—', duracion: '—', status: 'pendiente' }
+        ]
+      }
+    };
+
+    // Default trace data for lots not explicitly defined
+    function getTraceData(lotNumber) {
+      if (lotTraceData[lotNumber]) return lotTraceData[lotNumber];
+
+      // Generate generic trace
+      return {
+        cliente: 'Cliente desconocido',
+        fecha: '—',
+        pesoInicial: '—',
+        pesoActual: '—',
+        perdida: '—',
+        etapas: [
+          { nombre:'Recepción', inicio:'—', fin:'—', pesoInicio:'—', pesoFin:'—', perdida:'—', duracion:'—', status:'pendiente' },
+          { nombre:'Sapecado', inicio:'—', fin:'—', pesoInicio:'—', pesoFin:'—', perdida:'—', duracion:'—', status:'pendiente' },
+          { nombre:'Secado', inicio:'—', fin:'—', pesoInicio:'—', pesoFin:'—', perdida:'—', duracion:'—', status:'pendiente' },
+          { nombre:'Molienda', inicio:'—', fin:'—', pesoInicio:'—', pesoFin:'—', perdida:'—', duracion:'—', status:'pendiente' },
+          { nombre:'Envío', inicio:'—', fin:'—', pesoInicio:'—', pesoFin:'—', perdida:'—', duracion:'—', status:'pendiente' }
+        ]
+      };
+    }
+
+    function openTrazabilidadModal(lotNumber) {
+      const data = getTraceData(lotNumber);
+
+      document.getElementById('trazModalTitle').textContent = 'Lote #' + lotNumber;
+      document.getElementById('trazModalCliente').textContent = 'Cliente: ' + data.cliente + ' | Ingreso: ' + data.fecha;
+
+      let html = `<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="text-center p-3 bg-gray-50 rounded-lg"><p class="text-xs text-text-muted">Peso Inicial</p><p class="text-lg font-bold text-primary">${data.pesoInicial}</p></div>
+        <div class="text-center p-3 bg-gray-50 rounded-lg"><p class="text-xs text-text-muted">Peso Actual</p><p class="text-lg font-bold text-accent">${data.pesoActual}</p></div>
+        <div class="text-center p-3 bg-gray-50 rounded-lg"><p class="text-xs text-text-muted">Pérdida Total</p><p class="text-lg font-bold text-red-600">${data.perdida}</p></div>
+      </div>
+
+      <h4 class="font-display text-lg font-bold text-primary mb-4">Historial de Etapas</h4>`;
+
+      const statusConfig = {
+        completado: { icon: 'fa-check', circle: 'bg-primary text-white', badge: 'bg-green-100 text-green-700', text: 'Completado', opacity: '' },
+        actual: { icon: 'fa-gear fa-spin', circle: 'bg-white border-4 border-primary text-primary pulse-ring', badge: 'bg-blue-100 text-blue-700', text: 'En Curso', opacity: '' },
+        pendiente: { icon: 'fa-clock', circle: 'bg-gray-100 border-4 border-gray-300 text-gray-400', badge: 'bg-gray-100 text-gray-600', text: 'Pendiente', opacity: 'opacity-60' }
+      };
+
+      data.etapas.forEach(e => {
+        const cfg = statusConfig[e.status];
+        html += `
+        <div class="bg-white rounded-xl border border-border p-5 shadow-sm hover-lift ${cfg.opacity}">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 ${cfg.circle} rounded-full flex items-center justify-center flex-shrink-0" style="animation-duration:3s">
+              <i class="fa-solid ${cfg.icon}"></i>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between mb-2">
+                <h4 class="font-semibold ${e.status === 'actual' ? 'text-primary' : e.status === 'pendiente' ? 'text-gray-400' : 'text-text-dark'}">${e.nombre}</h4>
+                <span class="${cfg.badge} px-3 py-1 rounded-full text-xs font-medium">${cfg.text}</span>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm">
+                <div><p class="text-text-muted text-xs">Inicio</p><p class="font-medium text-text-dark">${e.inicio}</p></div>
+                <div><p class="text-text-muted text-xs">Fin</p><p class="font-medium text-text-dark">${e.fin}</p></div>
+                <div><p class="text-text-muted text-xs">Duración</p><p class="font-medium text-text-dark">${e.duracion}</p></div>
+                <div><p class="text-text-muted text-xs">Peso Inicial</p><p class="font-medium text-text-dark">${e.pesoInicio} kg</p></div>
+                <div><p class="text-text-muted text-xs">Peso Final</p><p class="font-medium text-text-dark">${e.pesoFin} kg</p></div>
+                <div><p class="text-text-muted text-xs">Pérdida</p><p class="font-medium ${e.status === 'completado' ? 'text-red-600' : 'text-text-muted'}">${e.perdida}</p></div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      });
+
+      document.getElementById('trazModalContent').innerHTML = html;
+      toggleModal('trazabilidadModal');
+    }
 
     // ==================== TOAST NOTIFICATION SYSTEM ====================
     function showToast(message, type) {
@@ -2335,6 +2117,30 @@
         showToast('Comprobante descargado exitosamente', 'success');
       }, 2000);
     }
+
+    // ==================== CLICK HANDLERS: KANBAN CARDS & LISTADO ROWS ====================
+    // Make Kanban cards clickable for trazabilidad
+    document.addEventListener('click', function(e) {
+      const card = e.target.closest('.cursor-pointer');
+      if (!card) return;
+      // Don't fire if clicking the client name (handled by openClientDetail)
+      if (e.target.closest('[onclick*="openClientDetail"]')) return;
+      // Find lot number in the card text
+      const lotSpan = card.querySelector('span.text-xs.font-semibold');
+      if (!lotSpan) return;
+      const match = lotSpan.textContent.match(/Lote #(\d{4}-\d{3})/);
+      if (match) {
+        openTrazabilidadModal(match[1]);
+      }
+    });
+
+    // Make listado rows clickable for trazabilidad
+    document.querySelectorAll('.lot-row').forEach(row => {
+      row.style.cursor = 'pointer';
+      row.addEventListener('click', function() {
+        openTrazabilidadModal(this.getAttribute('data-lote'));
+      });
+    });
   </script>
 </body>
 </html>
