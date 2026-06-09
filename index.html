@@ -704,7 +704,7 @@
                     <div class="flex items-center gap-2">
                       <button onclick="editCliente()" class="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="Editar"><i class="fa-solid fa-pen"></i></button>
                       <button onclick="deleteCliente()" class="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
-                      <button onclick="disableCliente()" class="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors" title="Deshabilitar"><i class="fa-solid fa-ban"></i></button>
+                      <button onclick="disableCliente(this)" class="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors" title="Deshabilitar"><i class="fa-solid fa-ban"></i></button>
                     </div>
                   </td>
                 </tr>
@@ -726,7 +726,7 @@
                     <div class="flex items-center gap-2">
                       <button onclick="editCliente()" class="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="Editar"><i class="fa-solid fa-pen"></i></button>
                       <button onclick="deleteCliente()" class="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
-                      <button onclick="disableCliente()" class="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors" title="Deshabilitar"><i class="fa-solid fa-ban"></i></button>
+                      <button onclick="disableCliente(this)" class="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors" title="Deshabilitar"><i class="fa-solid fa-ban"></i></button>
                     </div>
                   </td>
                 </tr>
@@ -748,7 +748,7 @@
                     <div class="flex items-center gap-2">
                       <button onclick="editCliente()" class="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="Editar"><i class="fa-solid fa-pen"></i></button>
                       <button onclick="deleteCliente()" class="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
-                      <button onclick="disableCliente()" class="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors" title="Deshabilitar"><i class="fa-solid fa-ban"></i></button>
+                      <button onclick="disableCliente(this)" class="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors" title="Deshabilitar"><i class="fa-solid fa-ban"></i></button>
                     </div>
                   </td>
                 </tr>
@@ -770,7 +770,7 @@
                     <div class="flex items-center gap-2">
                       <button onclick="editCliente()" class="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="Editar"><i class="fa-solid fa-pen"></i></button>
                       <button onclick="deleteCliente()" class="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
-                      <button onclick="disableCliente()" class="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors" title="Deshabilitar"><i class="fa-solid fa-ban"></i></button>
+                      <button onclick="disableCliente(this)" class="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors" title="Deshabilitar"><i class="fa-solid fa-ban"></i></button>
                     </div>
                   </td>
                 </tr>
@@ -792,7 +792,7 @@
                     <div class="flex items-center gap-2">
                       <button onclick="editCliente()" class="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="Editar"><i class="fa-solid fa-pen"></i></button>
                       <button onclick="deleteCliente()" class="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
-                      <button onclick="disableCliente()" class="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors" title="Deshabilitar"><i class="fa-solid fa-ban"></i></button>
+                      <button onclick="disableCliente(this)" class="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors" title="Deshabilitar"><i class="fa-solid fa-ban"></i></button>
                     </div>
                   </td>
                 </tr>
@@ -1715,7 +1715,13 @@
           <div id="comprobantePreviewContent" class="paper-texture bg-white rounded-xl border border-border overflow-hidden">
             <!-- Populated by JS -->
           </div>
-          <div class="mt-6 flex justify-center">
+          <div class="mt-6 flex justify-center gap-4">
+            <button onclick="showToast('Descargando comprobante...', 'info'); setTimeout(() => showToast('Comprobante descargado exitosamente', 'success'), 2000);" class="px-6 py-3 rounded-xl bg-red-600 text-white hover:bg-red-700 transition-all font-medium shadow-md flex items-center gap-2">
+              <i class="fa-solid fa-file-pdf"></i>Descargar
+            </button>
+            <button onclick="window.print()" class="px-6 py-3 rounded-xl bg-gray-600 text-white hover:bg-gray-700 transition-all font-medium shadow-md flex items-center gap-2">
+              <i class="fa-solid fa-print"></i>Imprimir
+            </button>
             <button onclick="toggleModal('comprobantePreviewModal')" class="px-6 py-3 rounded-xl border border-border text-text-muted hover:bg-gray-50 transition-all font-medium">
               <i class="fa-solid fa-xmark mr-2"></i>Cerrar
             </button>
@@ -2044,13 +2050,34 @@
       }
     }
 
-    function disableCliente() {
-      showToast('Cliente deshabilitado', 'warning');
+    function disableCliente(btn) {
+      const icon = btn.querySelector('i');
+      const isDisabled = icon.classList.contains('text-red-600');
+
+      if (isDisabled) {
+        // Re-enable
+        if (confirm('¿Quiere volver a habilitar este cliente?')) {
+          icon.className = 'fa-solid fa-ban';
+          btn.className = 'p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors';
+          btn.title = 'Deshabilitar';
+          showToast('Cliente habilitado nuevamente', 'success');
+        }
+      } else {
+        // Disable
+        if (confirm('¿Está seguro que quiere deshabilitar este cliente?')) {
+          icon.className = 'fa-solid fa-ban text-red-600';
+          btn.className = 'p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors';
+          btn.title = 'Habilitar';
+          showToast('Cliente deshabilitado', 'warning');
+        }
+      }
     }
 
     // ==================== REGISTRAR LOTE ====================
     function registrarLote() {
-      showToast('Lote registrado exitosamente', 'success');
+      if (confirm('¿Está seguro que desea registrar este lote?')) {
+        showToast('Lote registrado exitosamente', 'success');
+      }
     }
 
     function generarComprobante() {
