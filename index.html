@@ -384,6 +384,12 @@
             <span class="font-medium">Listado de Lotes</span>
           </a>
         </li>
+        <li>
+          <a href="#" onclick="showSection('lotes-entregados'); return false;" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/10">
+            <i class="fa-solid fa-truck-ramp-box w-5 text-center"></i>
+            <span class="font-medium">Lotes Entregados</span>
+          </a>
+        </li>
         <li class="admin-only">
           <a href="#" onclick="showSection('ordenes-produccion'); return false;" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/10">
             <i class="fa-solid fa-industry w-5 text-center"></i>
@@ -1242,6 +1248,63 @@
         </div>
       </section>
 
+      <!-- ==================== LOTES ENTREGADOS SECTION (UC-10) ==================== -->
+      <section id="lotes-entregados" class="hidden space-y-6">
+        <!-- Header -->
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="font-display text-2xl font-bold text-primary">Lotes Entregados</h2>
+            <p class="text-sm text-text-muted mt-1">Consultar lotes que han completado el proceso de envío</p>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-white rounded-xl shadow-sm border border-border p-4">
+            <p class="text-sm text-text-muted">Total Entregados</p>
+            <p id="totalEntregados" class="text-2xl font-bold text-primary">0</p>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm border border-border p-4">
+            <p class="text-sm text-text-muted">Peso Neto Total</p>
+            <p id="pesoTotalEntregados" class="text-2xl font-bold text-accent">0 kg</p>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm border border-border p-4">
+            <p class="text-sm text-text-muted">Pérdida Promedio</p>
+            <p id="perdidaPromedioEntregados" class="text-2xl font-bold text-red-600">0%</p>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-white rounded-xl shadow-sm border border-border overflow-hidden">
+          <div class="p-6 border-b border-border">
+            <h3 class="font-display text-lg font-bold text-primary">Registro de Lotes Entregados</h3>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-gray-50 border-b border-border">
+                <tr>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">N° Lote</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Cliente</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Fecha Ingreso</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Fecha Envío</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Peso Inicial</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Peso Final</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Pérdida</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Estado</th>
+                </tr>
+              </thead>
+              <tbody id="lotesEntregadosTableBody" class="divide-y divide-border">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+          <div id="lotesEntregadosEmptyState" class="hidden text-center py-8 text-gray-500">
+            <i class="fa-solid fa-box-open text-3xl mb-2"></i>
+            <p>No hay lotes entregados registrados</p>
+          </div>
+        </div>
+      </section>
+
       <!-- ==================== ÓRDENES DE PRODUCCIÓN SECTION ==================== -->
       <section id="ordenes-produccion" class="hidden space-y-6">
         <!-- Header -->
@@ -1447,6 +1510,26 @@
     </div>
   </div>
 
+  <!-- Confirm Modal (reemplaza confirm() nativo) -->
+  <div id="confirmModal" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" onclick="confirmModalNo()"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md relative z-10">
+        <div class="p-6 text-center">
+          <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fa-solid fa-triangle-exclamation text-2xl text-amber-600"></i>
+          </div>
+          <h3 class="font-display text-xl font-bold text-primary mb-2">Confirmar acción</h3>
+          <p id="confirmModalMessage" class="text-text-muted mb-6">¿Está seguro?</p>
+          <div class="flex justify-center gap-3">
+            <button onclick="confirmModalNo()" class="px-6 py-2 rounded-xl border border-border text-text-muted hover:bg-gray-50 transition-all font-medium">Cancelar</button>
+            <button onclick="confirmModalYes()" class="px-6 py-2 rounded-xl bg-primary text-white hover:bg-primary-light transition-all font-medium shadow-md">Confirmar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Crear Orden Modal -->
   <div id="crearOrdenModal" class="fixed inset-0 z-50 hidden">
     <div class="modal-overlay absolute inset-0" onclick="toggleModal('crearOrdenModal')"></div>
@@ -1562,7 +1645,7 @@
       document.getElementById('mainContent').classList.add('hidden');
       document.getElementById('mobileHeader').classList.add('hidden');
       // Hide all sections inside main
-      const sections = ['dashboard', 'clientes', 'registro-lote', 'listado-lotes', 'ordenes-produccion'];
+      const sections = ['dashboard', 'clientes', 'registro-lote', 'listado-lotes', 'lotes-entregados', 'ordenes-produccion'];
       sections.forEach(id => {
         document.getElementById(id).classList.add('hidden');
       });
@@ -1574,7 +1657,7 @@
     // Show specific section
     function showSection(sectionId) {
       // Hide all sections
-      const sections = ['dashboard', 'clientes', 'registro-lote', 'listado-lotes', 'ordenes-produccion'];
+      const sections = ['dashboard', 'clientes', 'registro-lote', 'listado-lotes', 'lotes-entregados', 'ordenes-produccion'];
       sections.forEach(id => {
         document.getElementById(id).classList.add('hidden');
       });
@@ -1588,6 +1671,7 @@
         'clientes': 'Gestión de Clientes',
         'registro-lote': 'Registro de Lote',
         'listado-lotes': 'Listado de Lotes',
+        'lotes-entregados': 'Lotes Entregados',
         'ordenes-produccion': 'Órdenes de Producción'
       };
       document.getElementById('pageTitle').textContent = titles[sectionId] || '';
@@ -2130,7 +2214,19 @@
       const confirmMsg = editingRow
         ? '¿Confirma los cambios realizados en este cliente?'
         : '¿Está seguro que desea registrar este nuevo cliente?';
-      if (!confirm(confirmMsg)) return;
+      
+      openConfirmModal(confirmMsg, function(result) {
+        if (!result) return;
+        executeSaveCliente();
+      });
+    }
+
+    function executeSaveCliente() {
+      const nombre = document.getElementById('clienteNombre').value.trim();
+      const apellido = document.getElementById('clienteApellido').value.trim();
+      const inym = document.getElementById('clienteINYM').value.trim();
+      const telefono = document.getElementById('clienteTelefono').value.trim();
+      const email = document.getElementById('clienteEmail').value.trim();
 
       if (editingRow) {
         // Edit mode: update the existing row (Sommerville: visibilidad del estado)
@@ -2163,26 +2259,28 @@
     }
 
     function editCliente(btn) {
-      if (!confirm('¿Está seguro que desea editar este cliente?')) return;
+      openConfirmModal('¿Está seguro que desea editar este cliente?', function(result) {
+        if (!result) return;
+        const row = btn.closest('tr');
+        editingRow = row;
 
-      const row = btn.closest('tr');
-      editingRow = row;
+        // Populate modal with existing data (Kendall Cap.12: reducir errores con datos precargados)
+        document.getElementById('clienteModalTitle').textContent = 'Editar Cliente';
+        document.getElementById('clienteNombre').value = row.getAttribute('data-nombre');
+        document.getElementById('clienteApellido').value = row.getAttribute('data-apellido');
+        document.getElementById('clienteINYM').value = row.getAttribute('data-inym');
+        document.getElementById('clienteDNI').value = row.getAttribute('data-dni');
+        document.getElementById('clienteTelefono').value = row.getAttribute('data-telefono');
+        document.getElementById('clienteEmail').value = row.getAttribute('data-email');
+        document.getElementById('clienteDireccion').value = row.getAttribute('data-direccion');
 
-      // Populate modal with existing data (Kendall Cap.12: reducir errores con datos precargados)
-      document.getElementById('clienteModalTitle').textContent = 'Editar Cliente';
-      document.getElementById('clienteNombre').value = row.getAttribute('data-nombre');
-      document.getElementById('clienteApellido').value = row.getAttribute('data-apellido');
-      document.getElementById('clienteINYM').value = row.getAttribute('data-inym');
-      document.getElementById('clienteDNI').value = row.getAttribute('data-dni');
-      document.getElementById('clienteTelefono').value = row.getAttribute('data-telefono');
-      document.getElementById('clienteEmail').value = row.getAttribute('data-email');
-      document.getElementById('clienteDireccion').value = row.getAttribute('data-direccion');
-
-      toggleModal('clienteModal');
+        toggleModal('clienteModal');
+      });
     }
 
     function deleteCliente(btn) {
-      if (confirm('¿Está seguro que quiere eliminar este cliente? Esta acción no se puede deshacer.')) {
+      openConfirmModal('¿Está seguro que quiere eliminar este cliente? Esta acción no se puede deshacer.', function(result) {
+        if (!result) return;
         const row = btn.closest('tr');
         row.style.transition = 'all 0.3s ease';
         row.style.opacity = '0';
@@ -2191,7 +2289,7 @@
           row.remove();
           showToast('Cliente eliminado permanentemente', 'success');
         }, 300);
-      }
+      });
     }
 
     function resetClienteModal() {
@@ -2212,20 +2310,22 @@
 
       if (isDisabled) {
         // Re-enable
-        if (confirm('¿Quiere volver a habilitar este cliente?')) {
+        openConfirmModal('¿Quiere volver a habilitar este cliente?', function(result) {
+          if (!result) return;
           icon.className = 'fa-solid fa-ban';
           btn.className = 'p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors';
           btn.title = 'Deshabilitar';
           showToast('Cliente habilitado nuevamente', 'success');
-        }
+        });
       } else {
         // Disable
-        if (confirm('¿Está seguro que quiere deshabilitar este cliente?')) {
+        openConfirmModal('¿Está seguro que quiere deshabilitar este cliente?', function(result) {
+          if (!result) return;
           icon.className = 'fa-solid fa-ban text-red-600';
           btn.className = 'p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors';
           btn.title = 'Habilitar';
           showToast('Cliente deshabilitado', 'warning');
-        }
+        });
       }
     }
 
@@ -2248,9 +2348,10 @@
         return;
       }
       
-      if (confirm('¿Está seguro que desea registrar este lote?')) {
+      openConfirmModal('¿Está seguro que desea registrar este lote?', function(result) {
+        if (!result) return;
         showToast('Lote registrado exitosamente', 'success');
-      }
+      });
     }
 
     function generarComprobante(lotNumber) {
@@ -2731,15 +2832,16 @@
         showToast('Solo se pueden eliminar órdenes pendientes', 'error');
         return;
       }
-      if (!confirm('¿Está seguro que desea eliminar la orden ' + ordenId + '?')) return;
-      
-      const idx = ordenesProduccion.findIndex(o => o.id === ordenId);
-      if (idx > -1) {
-        ordenesProduccion.splice(idx, 1);
-        showToast('Orden eliminada', 'success');
-        renderOrdenes();
-        document.getElementById('ordenDetailPanel').classList.add('hidden');
-      }
+      openConfirmModal('¿Está seguro que desea eliminar la orden ' + ordenId + '?', function(result) {
+        if (!result) return;
+        const idx = ordenesProduccion.findIndex(o => o.id === ordenId);
+        if (idx > -1) {
+          ordenesProduccion.splice(idx, 1);
+          showToast('Orden eliminada', 'success');
+          renderOrdenes();
+          document.getElementById('ordenDetailPanel').classList.add('hidden');
+        }
+      });
     }
 
     function registrarAvance() {
@@ -2922,8 +3024,89 @@
       editingLoteId = null;
     }
 
+    // ==================== UC-10: LOTES ENTREGADOS ====================
+    function renderLotesEntregados() {
+      const tbody = document.getElementById('lotesEntregadosTableBody');
+      const emptyState = document.getElementById('lotesEntregadosEmptyState');
+      
+      // Filtrar lotes con etapa "Envío" completada
+      const entregados = Object.entries(lotTraceData).filter(([id, data]) => {
+        const envioEtapa = data.etapas.find(e => e.nombre.toLowerCase() === 'envío');
+        return envioEtapa && envioEtapa.status === 'completado';
+      });
+
+      // Stats
+      const totalEntregados = entregados.length;
+      let pesoTotal = 0;
+      let perdidaTotal = 0;
+      
+      entregados.forEach(([id, data]) => {
+        const pesoInicial = parseFloat(data.pesoInicial.replace(/[^\d.]/g, '')) || 0;
+        const pesoActual = parseFloat(data.pesoActual.replace(/[^\d.]/g, '')) || 0;
+        pesoTotal += pesoActual;
+        if (pesoInicial > 0) {
+          perdidaTotal += ((pesoInicial - pesoActual) / pesoInicial) * 100;
+        }
+      });
+      
+      document.getElementById('totalEntregados').textContent = totalEntregados;
+      document.getElementById('pesoTotalEntregados').textContent = pesoTotal.toLocaleString('es-AR') + ' kg';
+      document.getElementById('perdidaPromedioEntregados').textContent = (totalEntregados > 0 ? (perdidaTotal / totalEntregados).toFixed(1) : 0) + '%';
+
+      if (entregados.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+      emptyState.classList.add('hidden');
+
+      tbody.innerHTML = entregados.map(([id, data]) => {
+        const pesoInicial = parseFloat(data.pesoInicial.replace(/[^\d.]/g, '')) || 0;
+        const pesoActual = parseFloat(data.pesoActual.replace(/[^\d.]/g, '')) || 0;
+        const perdida = pesoInicial - pesoActual;
+        const porcentaje = pesoInicial > 0 ? ((perdida / pesoInicial) * 100).toFixed(1) : 0;
+        const envioEtapa = data.etapas.find(e => e.nombre.toLowerCase() === 'envío');
+        const fechaEnvio = envioEtapa ? envioEtapa.fin : '—';
+        
+        return `
+          <tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="openTrazabilidadModal('${id}')">
+            <td class="px-6 py-4 text-sm font-medium text-text-dark">#${id}</td>
+            <td class="px-6 py-4 text-sm text-text-dark">${data.cliente}</td>
+            <td class="px-6 py-4 text-sm text-text-muted">${data.fecha}</td>
+            <td class="px-6 py-4 text-sm text-text-muted">${fechaEnvio}</td>
+            <td class="px-6 py-4 text-sm font-medium text-text-dark">${data.pesoInicial}</td>
+            <td class="px-6 py-4 text-sm font-medium text-primary">${data.pesoActual}</td>
+            <td class="px-6 py-4 text-sm font-medium text-red-600">-${perdida.toLocaleString('es-AR')} kg (${porcentaje}%)</td>
+            <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Entregado</span></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // ==================== MODAL DE CONFIRMACIÓN PROPIO (Kendall: consistencia) ====================
+    let confirmCallback = null;
+
+    function openConfirmModal(message, callback) {
+      confirmCallback = callback;
+      document.getElementById('confirmModalMessage').textContent = message;
+      toggleModal('confirmModal');
+    }
+
+    function confirmModalYes() {
+      toggleModal('confirmModal');
+      if (confirmCallback) confirmCallback(true);
+      confirmCallback = null;
+    }
+
+    function confirmModalNo() {
+      toggleModal('confirmModal');
+      if (confirmCallback) confirmCallback(false);
+      confirmCallback = null;
+    }
+
     // Initialize
     renderOrdenes();
+    renderLotesEntregados();
   </script>
 </body>
 </html>
