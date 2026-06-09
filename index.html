@@ -1621,6 +1621,40 @@
     </div>
   </div>
 
+  <!-- Registrar Envío Modal (UC-15) -->
+  <div id="registrarEnvioModal" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" onclick="toggleModal('registrarEnvioModal')"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative z-10">
+        <div class="p-6 border-b border-border flex items-center justify-between">
+          <h3 class="font-display text-xl font-bold text-primary">Registrar Envío</h3>
+          <button onclick="toggleModal('registrarEnvioModal')" class="p-2 rounded-lg hover:bg-gray-100 transition-colors text-text-muted">
+            <i class="fa-solid fa-xmark text-xl"></i>
+          </button>
+        </div>
+        <div class="p-6 space-y-4">
+          <p class="text-sm text-text-muted">Seleccione los lotes en el panel de la orden y complete los datos del envío.</p>
+          <div>
+            <label class="block text-sm font-medium text-text-dark mb-1">Fecha de envío <span class="text-red-500">*</span></label>
+            <input type="date" id="envioFecha" class="w-full px-4 py-2 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-text-dark mb-1">Peso final real (kg) <span class="text-red-500">*</span></label>
+            <input type="number" id="envioPesoFinal" min="0" step="0.001" class="w-full px-4 py-2 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: 12450">
+            <p class="text-xs text-text-muted mt-1">Debe ser menor al peso inicial del lote.</p>
+          </div>
+          <div id="envioError" class="hidden bg-red-50 border border-red-200 rounded-lg p-3">
+            <p class="text-sm text-red-600"><i class="fa-solid fa-circle-exclamation mr-1"></i><span id="envioErrorMsg"></span></p>
+          </div>
+          <div class="flex justify-end gap-3 pt-2">
+            <button onclick="toggleModal('registrarEnvioModal')" class="px-6 py-3 rounded-xl border border-border text-text-muted hover:bg-gray-50 transition-all font-medium">Cancelar</button>
+            <button onclick="confirmarRegistrarEnvio()" class="px-6 py-3 rounded-xl bg-primary text-white hover:bg-primary-light transition-all font-medium shadow-md">Confirmar Envío</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Edit Lote Modal (UC-09) -->
   <div id="editLoteModal" class="fixed inset-0 z-50 hidden">
     <div class="modal-overlay absolute inset-0" onclick="toggleModal('editLoteModal')"></div>
@@ -2982,6 +3016,7 @@
       tbody.innerHTML = filtered.map(orden => {
         const estadoClass = orden.estado === 'Finalizado' ? 'bg-green-100 text-green-700' : 
                           orden.estado === 'En proceso' ? 'bg-amber-100 text-amber-700' : 
+                          orden.estado === 'Envío' ? 'bg-blue-100 text-blue-700' :
                           'bg-gray-100 text-gray-600';
         return `
           <tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="selectOrden('${orden.id}')">
@@ -3015,6 +3050,7 @@
       
       const estadoClass = orden.estado === 'Finalizado' ? 'bg-green-100 text-green-700' : 
                         orden.estado === 'En proceso' ? 'bg-amber-100 text-amber-700' : 
+                        orden.estado === 'Envío' ? 'bg-blue-100 text-blue-700' :
                         'bg-gray-100 text-gray-600';
       const estadoEl = document.getElementById('detailOrdenEstado');
       estadoEl.className = `px-3 py-1 rounded-full text-xs font-medium ${estadoClass}`;
@@ -3026,9 +3062,11 @@
         const lote = lotTraceData[loteId];
         if (!lote) return '';
         const etapaActual = lote.etapas.find(e => e.status === 'actual');
-        const etapaNombre = etapaActual ? etapaActual.nombre : 'Pendiente';
-        const etapaIndex = lote.etapas.findIndex(e => e.status === 'actual');
-        const isDisabled = etapaNombre === 'Envío' || etapaNombre === 'Finalizado';
+        let etapaNombre = etapaActual ? etapaActual.nombre : 'Pendiente';
+        // Si no hay etapa actual, verificar si todas están completadas (lote finalizado)
+        const todasCompletadas = !etapaActual && lote.etapas.every(e => e.status === 'completado');
+        if (todasCompletadas) etapaNombre = 'Finalizado';
+        const isDisabled = etapaNombre === 'Finalizado' || etapaNombre === 'Envío';
         return `
           <tr>
             <td class="px-4 py-2 text-center">
@@ -3300,39 +3338,111 @@
         return;
       }
       
+      // Validar que los lotes seleccionados estén en Molienda
+      let hayError = false;
+      checkboxes.forEach(cb => {
+        const loteId = cb.value;
+        const lote = lotTraceData[loteId];
+        if (lote && lote.etapas) {
+          const envioIndex = lote.etapas.findIndex(e => e.nombre.toLowerCase() === 'envío');
+          const actualIndex = lote.etapas.findIndex(e => e.status === 'actual');
+          if (actualIndex >= 0 && actualIndex !== envioIndex - 1) {
+            showToast(`El lote #${loteId} no está listo para envío. Debe estar en Molienda.`, 'error');
+            hayError = true;
+          }
+        }
+      });
+      if (hayError) return;
+      
+      // Set default date to today
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('envioFecha').value = today;
+      document.getElementById('envioPesoFinal').value = '';
+      document.getElementById('envioError').classList.add('hidden');
+      
+      toggleModal('registrarEnvioModal');
+    }
+
+    function confirmarRegistrarEnvio() {
+      const fechaEnvio = document.getElementById('envioFecha').value;
+      const pesoFinal = parseFloat(document.getElementById('envioPesoFinal').value);
+      const errorDiv = document.getElementById('envioError');
+      const errorMsg = document.getElementById('envioErrorMsg');
+      
+      if (!fechaEnvio) {
+        errorMsg.textContent = 'La fecha de envío es requerida.';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+      
+      if (isNaN(pesoFinal) || pesoFinal <= 0) {
+        errorMsg.textContent = 'El peso final real debe ser mayor a 0.';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+      
       const orden = ordenesProduccion.find(o => o.id === selectedOrdenId);
-      if (orden) {
-        checkboxes.forEach(cb => {
-          const loteId = cb.value;
-          const lote = lotTraceData[loteId];
-          if (lote && lote.etapas) {
-            const envioIndex = lote.etapas.findIndex(e => e.nombre.toLowerCase() === 'envío');
-            if (envioIndex >= 0) {
-              // Validar que esté en molienda actual
-              const actualIndex = lote.etapas.findIndex(e => e.status === 'actual');
-              if (actualIndex >= 0 && actualIndex !== envioIndex - 1) {
-                showToast(`El lote #${loteId} no está listo para envío. Debe estar en Molienda.`, 'error');
+      if (!orden) return;
+      
+      const checkboxes = document.querySelectorAll('.lote-checkbox:checked');
+      let exitosos = 0;
+      
+      checkboxes.forEach(cb => {
+        const loteId = cb.value;
+        const lote = lotTraceData[loteId];
+        if (lote && lote.etapas) {
+          const envioIndex = lote.etapas.findIndex(e => e.nombre.toLowerCase() === 'envío');
+          if (envioIndex >= 0) {
+            // Validar que fecha de envío no sea anterior a fin de última etapa
+            const etapaAnterior = lote.etapas[envioIndex - 1];
+            if (etapaAnterior && etapaAnterior.fin && etapaAnterior.fin !== '—') {
+              const finParts = etapaAnterior.fin.split('/');
+              const finDate = new Date(finParts[2], finParts[1] - 1, finParts[0]);
+              const envioDate = new Date(fechaEnvio);
+              if (envioDate < finDate) {
+                showToast(`La fecha de envío no puede ser anterior a la fecha de fin de la etapa anterior (${etapaAnterior.fin})`, 'error');
                 return;
               }
-              
-              for (let i = 0; i < envioIndex; i++) {
-                lote.etapas[i].status = 'completado';
-              }
-              lote.etapas[envioIndex].status = 'actual';
-              lote.etapas[envioIndex].inicio = new Date().toLocaleDateString('es-AR');
             }
+            
+            // Validar peso final < peso inicial
+            const pesoInicial = parseFloat((lote.pesaje ? lote.pesaje.neto : lote.pesoInicial).replace(/[^\d.]/g, ''));
+            if (pesoFinal > pesoInicial) {
+              showToast(`El peso final (${pesoFinal} kg) no puede ser mayor al peso inicial (${pesoInicial} kg)`, 'error');
+              return;
+            }
+            
+            // Marcar etapas anteriores como completadas
+            for (let i = 0; i < envioIndex; i++) {
+              lote.etapas[i].status = 'completado';
+            }
+            
+            // Marcar Envío como completada (no actual)
+            lote.etapas[envioIndex].status = 'completado';
+            lote.etapas[envioIndex].inicio = fechaEnvio;
+            lote.etapas[envioIndex].fin = fechaEnvio;
+            lote.etapas[envioIndex].pesoInicio = pesoFinal;
+            lote.etapas[envioIndex].pesoFin = pesoFinal;
+            lote.etapas[envioIndex].perdida = 0;
+            lote.etapas[envioIndex].perdidaPorcentaje = '0.00';
+            
+            // Actualizar peso actual del lote
+            lote.pesoActual = pesoFinal.toLocaleString('es-AR') + ' kg';
+            
+            exitosos++;
           }
-        });
-        
-        const todosEnEnvio = orden.lotes.every(lid => {
-          const lote = lotTraceData[lid];
-          return lote && lote.etapas.some(e => e.nombre.toLowerCase() === 'envío' && e.status === 'actual');
-        });
-        if (todosEnEnvio) orden.estado = 'En proceso';
+        }
+      });
+      
+      if (exitosos > 0) {
+        // Cambiar estado de la orden a "Envío"
+        orden.estado = 'Envío';
         
         showToast('Envío registrado exitosamente', 'success');
+        toggleModal('registrarEnvioModal');
         selectOrden(selectedOrdenId);
         renderOrdenes();
+        renderLotesEntregados();
       }
     }
 
@@ -3477,7 +3587,10 @@
         const perdida = pesoInicial - pesoActual;
         const porcentaje = pesoInicial > 0 ? ((perdida / pesoInicial) * 100).toFixed(1) : 0;
         const envioEtapa = data.etapas.find(e => e.nombre.toLowerCase() === 'envío');
-        const fechaEnvio = envioEtapa ? envioEtapa.fin : '—';
+        const fechaEnvio = (envioEtapa && envioEtapa.fin && envioEtapa.fin !== '—') ? envioEtapa.fin : '—';
+        // Usar el peso final real registrado en la etapa de envío si existe
+        const pesoFinalReal = (envioEtapa && envioEtapa.pesoFin && envioEtapa.pesoFin !== '—') ? envioEtapa.pesoFin : pesoActual;
+        const pesoFinalDisplay = typeof pesoFinalReal === 'number' ? pesoFinalReal.toLocaleString('es-AR') + ' kg' : pesoFinalReal;
         
         return `
           <tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="openTrazabilidadModal('${id}')">
@@ -3486,9 +3599,9 @@
             <td class="px-6 py-4 text-sm text-text-muted">${data.fecha}</td>
             <td class="px-6 py-4 text-sm text-text-muted">${fechaEnvio}</td>
             <td class="px-6 py-4 text-sm font-medium text-text-dark">${data.pesoInicial}</td>
-            <td class="px-6 py-4 text-sm font-medium text-primary">${data.pesoActual}</td>
+            <td class="px-6 py-4 text-sm font-medium text-primary">${pesoFinalDisplay}</td>
             <td class="px-6 py-4 text-sm font-medium text-red-600">-${perdida.toLocaleString('es-AR')} kg (${porcentaje}%)</td>
-            <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Entregado</span></td>
+            <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">Envío</span></td>
           </tr>
         `;
       }).join('');
