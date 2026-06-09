@@ -2221,10 +2221,9 @@
     }
 
     // ==================== CLICK HANDLERS: KANBAN CARDS & LISTADO ROWS ====================
-    // Kanban cards: use data-lote attributes (robust, no text parsing)
-    document.querySelectorAll('[data-lote]').forEach(card => {
+    // Kanban cards: use data-lote attributes (exclude listado rows to avoid double-fire)
+    document.querySelectorAll('[data-lote]:not(.lot-row)').forEach(card => {
       card.addEventListener('click', function(e) {
-        // Don't fire if clicking the client name link
         if (e.target.closest('[onclick*="openClientDetail"]')) return;
         const lote = this.getAttribute('data-lote');
         if (lote) openTrazabilidadModal(lote);
