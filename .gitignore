@@ -1,0 +1,9 @@
+# Backups
+*.bak
+
+# PDF documentation (large files)
+*.pdf
+
+# OS files
+.DS_Store
+Thumbs.db
