@@ -391,6 +391,12 @@
           </a>
         </li>
         <li class="admin-only">
+          <a href="#" onclick="showSection('usuarios'); return false;" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/10">
+            <i class="fa-solid fa-user-shield w-5 text-center"></i>
+            <span class="font-medium">Usuarios</span>
+          </a>
+        </li>
+        <li class="admin-only">
           <a href="#" onclick="showSection('ordenes-produccion'); return false;" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/10">
             <i class="fa-solid fa-industry w-5 text-center"></i>
             <span class="font-medium">Órdenes de Producción</span>
@@ -1305,6 +1311,54 @@
         </div>
       </section>
 
+      <!-- ==================== USUARIOS SECTION ==================== -->
+      <section id="usuarios" class="hidden space-y-6">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="font-display text-2xl font-bold text-primary">Gestión de Usuarios</h2>
+            <p class="text-sm text-text-muted mt-1">Administrar usuarios del sistema y sus permisos</p>
+          </div>
+          <button onclick="resetUsuarioModal(); toggleModal('usuarioModal')" class="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-light transition-all duration-200 active:scale-95 shadow-md flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i>
+            Nuevo Usuario
+          </button>
+        </div>
+
+        <!-- Search -->
+        <div class="bg-white rounded-xl shadow-sm border border-border p-4">
+          <div class="relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-text-muted"></i>
+            <input id="searchUsuarios" type="text" oninput="filtrarUsuarios()" class="w-full pl-10 pr-4 py-2 rounded-lg border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all text-sm" placeholder="Buscar por nombre, usuario o rol...">
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-white rounded-xl shadow-sm border border-border overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="bg-gray-50 border-b border-border">
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">ID</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Usuario</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Nombre Completo</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Rol</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Estado</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="usuariosTableBody" class="divide-y divide-border">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+          <div id="usuariosEmptyState" class="hidden text-center py-8 text-gray-500">
+            <i class="fa-solid fa-users-slash text-3xl mb-2"></i>
+            <p>No se encontraron usuarios</p>
+          </div>
+        </div>
+      </section>
+
       <!-- ==================== ÓRDENES DE PRODUCCIÓN SECTION ==================== -->
       <section id="ordenes-produccion" class="hidden space-y-6">
         <!-- Header -->
@@ -1592,6 +1646,55 @@
     </div>
   </div>
 
+  <!-- Usuario Modal (Alta/Edición) -->
+  <div id="usuarioModal" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" onclick="toggleModal('usuarioModal')"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative z-10">
+        <div class="p-6 border-b border-border flex items-center justify-between">
+          <h3 id="usuarioModalTitle" class="font-display text-xl font-bold text-primary">Nuevo Usuario</h3>
+          <button onclick="toggleModal('usuarioModal')" class="p-2 rounded-lg hover:bg-gray-100 transition-colors text-text-muted">
+            <i class="fa-solid fa-xmark text-xl"></i>
+          </button>
+        </div>
+        <div class="p-6 space-y-4">
+          <input type="hidden" id="editingUsuarioId" value="">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-text-dark mb-2 required-field">Nombre</label>
+              <input id="usuarioNombre" type="text" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: Juan">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-text-dark mb-2 required-field">Apellido</label>
+              <input id="usuarioApellido" type="text" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: Pérez">
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-text-dark mb-2 required-field">Nombre de Usuario</label>
+            <input id="usuarioUsername" type="text" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: jperez">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-text-dark mb-2 required-field">Contraseña</label>
+            <input id="usuarioPassword" type="password" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Mínimo 6 caracteres">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-text-dark mb-2 required-field">Rol</label>
+            <select id="usuarioRol" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all bg-white">
+              <option value="">Seleccionar rol...</option>
+              <option value="Administrador">Administrador</option>
+              <option value="Administrador Comercial">Administrador Comercial</option>
+            </select>
+          </div>
+          <p class="text-xs text-gray-500"><span class="text-red-500">*</span> Campos obligatorios</p>
+        </div>
+        <div class="p-6 border-t border-border flex justify-end gap-3">
+          <button onclick="toggleModal('usuarioModal')" class="px-6 py-3 rounded-xl border border-border text-text-muted hover:bg-gray-50 transition-all font-medium">Cancelar</button>
+          <button onclick="guardarUsuario()" class="px-6 py-3 rounded-xl bg-primary text-white hover:bg-primary-light transition-all font-medium shadow-md">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================== JAVASCRIPT ==================== -->
   <script>
     // Navigation state
@@ -1645,7 +1748,7 @@
       document.getElementById('mainContent').classList.add('hidden');
       document.getElementById('mobileHeader').classList.add('hidden');
       // Hide all sections inside main
-      const sections = ['dashboard', 'clientes', 'registro-lote', 'listado-lotes', 'lotes-entregados', 'ordenes-produccion'];
+      const sections = ['dashboard', 'clientes', 'registro-lote', 'listado-lotes', 'lotes-entregados', 'usuarios', 'ordenes-produccion'];
       sections.forEach(id => {
         document.getElementById(id).classList.add('hidden');
       });
@@ -1657,7 +1760,7 @@
     // Show specific section
     function showSection(sectionId) {
       // Hide all sections
-      const sections = ['dashboard', 'clientes', 'registro-lote', 'listado-lotes', 'lotes-entregados', 'ordenes-produccion'];
+      const sections = ['dashboard', 'clientes', 'registro-lote', 'listado-lotes', 'lotes-entregados', 'usuarios', 'ordenes-produccion'];
       sections.forEach(id => {
         document.getElementById(id).classList.add('hidden');
       });
@@ -1672,6 +1775,7 @@
         'registro-lote': 'Registro de Lote',
         'listado-lotes': 'Listado de Lotes',
         'lotes-entregados': 'Lotes Entregados',
+        'usuarios': 'Gestión de Usuarios',
         'ordenes-produccion': 'Órdenes de Producción'
       };
       document.getElementById('pageTitle').textContent = titles[sectionId] || '';
@@ -2133,6 +2237,165 @@
     ];
 
     let selectedOrdenId = null;
+
+    // ==================== USUARIOS ====================
+    let usuarios = [
+      { id: 1, nombre: 'Admin', apellido: 'Sistema', username: 'admin', password: 'admin123', rol: 'Administrador', estado: 'Activo' },
+      { id: 2, nombre: 'María', apellido: 'González', username: 'mgonzalez', password: 'comercial1', rol: 'Administrador Comercial', estado: 'Activo' },
+      { id: 3, nombre: 'Carlos', apellido: 'Martínez', username: 'cmartinez', password: 'admin2', rol: 'Administrador', estado: 'Inactivo' }
+    ];
+
+    let editingUsuarioId = null;
+
+    function renderUsuarios() {
+      const tbody = document.getElementById('usuariosTableBody');
+      const search = document.getElementById('searchUsuarios').value.toLowerCase();
+      const filtered = usuarios.filter(u => 
+        u.nombre.toLowerCase().includes(search) || 
+        u.apellido.toLowerCase().includes(search) ||
+        u.username.toLowerCase().includes(search) ||
+        u.rol.toLowerCase().includes(search)
+      );
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        document.getElementById('usuariosEmptyState').classList.remove('hidden');
+        return;
+      }
+      document.getElementById('usuariosEmptyState').classList.add('hidden');
+
+      tbody.innerHTML = filtered.map(u => {
+        const estadoClass = u.estado === 'Activo' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600';
+        const rolClass = u.rol === 'Administrador' ? 'bg-primary/10 text-primary' : 'bg-accent/10 text-accent-brown';
+        return `
+          <tr class="hover:bg-gray-50 transition-colors" data-id="${u.id}">
+            <td class="px-6 py-4 text-sm text-text-muted">#${String(u.id).padStart(3, '0')}</td>
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold text-sm">${u.nombre[0]}${u.apellido[0]}</div>
+                <div>
+                  <p class="text-sm font-medium text-text-dark">@${u.username}</p>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-text-dark">${u.nombre} ${u.apellido}</td>
+            <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-xs font-medium ${rolClass}">${u.rol}</span></td>
+            <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-xs font-medium ${estadoClass}">${u.estado}</span></td>
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-2">
+                <button onclick="editUsuario(${u.id})" class="p-2 rounded-lg hover:bg-blue-50 text-primary transition-colors" title="Editar">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button onclick="toggleUsuarioEstado(${u.id})" class="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors" title="${u.estado === 'Activo' ? 'Deshabilitar' : 'Habilitar'}">
+                  <i class="fa-solid ${u.estado === 'Activo' ? 'fa-user-slash' : 'fa-user-check'}"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filtrarUsuarios() {
+      renderUsuarios();
+    }
+
+    function guardarUsuario() {
+      const nombre = document.getElementById('usuarioNombre').value.trim();
+      const apellido = document.getElementById('usuarioApellido').value.trim();
+      const username = document.getElementById('usuarioUsername').value.trim();
+      const password = document.getElementById('usuarioPassword').value;
+      const rol = document.getElementById('usuarioRol').value;
+
+      // Validaciones (Sommerville: prevención de errores)
+      if (!nombre || !apellido) {
+        showToast('El nombre y apellido son obligatorios', 'error');
+        return;
+      }
+      if (!username || username.length < 3) {
+        showToast('El usuario debe tener al menos 3 caracteres', 'error');
+        return;
+      }
+      if (!editingUsuarioId && (!password || password.length < 6)) {
+        showToast('La contraseña debe tener al menos 6 caracteres', 'error');
+        return;
+      }
+      if (!rol) {
+        showToast('Debe seleccionar un rol', 'error');
+        return;
+      }
+
+      if (editingUsuarioId) {
+        const u = usuarios.find(us => us.id === editingUsuarioId);
+        if (u) {
+          u.nombre = nombre;
+          u.apellido = apellido;
+          u.username = username;
+          u.rol = rol;
+          if (password) u.password = password;
+          showToast('Usuario actualizado exitosamente', 'success');
+        }
+      } else {
+        const newId = usuarios.length > 0 ? Math.max(...usuarios.map(u => u.id)) + 1 : 1;
+        usuarios.push({
+          id: newId,
+          nombre,
+          apellido,
+          username,
+          password,
+          rol,
+          estado: 'Activo'
+        });
+        showToast('Usuario creado exitosamente', 'success');
+      }
+
+      resetUsuarioModal();
+      toggleModal('usuarioModal');
+      renderUsuarios();
+    }
+
+    function editUsuario(id) {
+      const u = usuarios.find(us => us.id === id);
+      if (!u) return;
+
+      editingUsuarioId = id;
+      document.getElementById('usuarioModalTitle').textContent = 'Editar Usuario';
+      document.getElementById('usuarioNombre').value = u.nombre;
+      document.getElementById('usuarioApellido').value = u.apellido;
+      document.getElementById('usuarioUsername').value = u.username;
+      document.getElementById('usuarioPassword').value = '';
+      document.getElementById('usuarioPassword').placeholder = 'Dejar vacío para mantener actual';
+      document.getElementById('usuarioRol').value = u.rol;
+
+      toggleModal('usuarioModal');
+    }
+
+    function toggleUsuarioEstado(id) {
+      const u = usuarios.find(us => us.id === id);
+      if (!u) return;
+
+      const msg = u.estado === 'Activo' 
+        ? `¿Está seguro que desea deshabilitar al usuario @${u.username}?`
+        : `¿Está seguro que desea habilitar al usuario @${u.username}?`;
+
+      openConfirmModal(msg, function(result) {
+        if (!result) return;
+        u.estado = u.estado === 'Activo' ? 'Inactivo' : 'Activo';
+        showToast(`Usuario ${u.estado === 'Activo' ? 'habilitado' : 'deshabilitado'}`, 'success');
+        renderUsuarios();
+      });
+    }
+
+    function resetUsuarioModal() {
+      editingUsuarioId = null;
+      document.getElementById('usuarioModalTitle').textContent = 'Nuevo Usuario';
+      document.getElementById('usuarioNombre').value = '';
+      document.getElementById('usuarioApellido').value = '';
+      document.getElementById('usuarioUsername').value = '';
+      document.getElementById('usuarioPassword').value = '';
+      document.getElementById('usuarioPassword').placeholder = 'Mínimo 6 caracteres';
+      document.getElementById('usuarioRol').value = '';
+    }
 
     function openClientDetail(clientName) {
       const client = clientData[clientName];
@@ -3107,6 +3370,7 @@
     // Initialize
     renderOrdenes();
     renderLotesEntregados();
+    renderUsuarios();
   </script>
 </body>
 </html>
