@@ -712,6 +712,14 @@
           </button>
         </div>
 
+        <!-- Search -->
+        <div class="bg-white rounded-xl shadow-sm border border-border p-4">
+          <div class="relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-text-muted"></i>
+            <input id="searchClientes" type="text" oninput="filtrarClientes()" class="w-full pl-10 pr-4 py-2 rounded-lg border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all text-sm" placeholder="Buscar por nombre, INYM, DNI o teléfono...">
+          </div>
+        </div>
+
         <!-- Table -->
         <div class="bg-white rounded-xl shadow-sm border border-border overflow-hidden">
           <div class="overflow-x-auto">
@@ -726,7 +734,7 @@
                   <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Acciones</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-border">
+              <tbody id="clientesTableBody" class="divide-y divide-border">
                 <tr class="hover:bg-gray-50 transition-colors" data-id="001" data-nombre="Juan" data-apellido="Pérez" data-inym="12345" data-dni="30123456" data-telefono="+54 3751 123456" data-email="juancito@email.com" data-direccion="Calle Falsa 123, Posadas, Misiones">
                   <td class="px-6 py-4 text-sm text-text-muted">#001</td>
                   <td class="px-6 py-4">
@@ -836,6 +844,9 @@
                       <button onclick="disableCliente(this)" class="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors" title="Deshabilitar"><i class="fa-solid fa-ban"></i></button>
                     </div>
                   </td>
+                </tr>
+                <tr id="noClientesRow" class="hidden">
+                  <td colspan="6" class="text-center py-8 text-gray-500">No se encontraron clientes con ese criterio</td>
                 </tr>
               </tbody>
             </table>
@@ -1068,6 +1079,7 @@
                   <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Peso Neto (kg)</th>
                   <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Etapa Actual</th>
                   <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Estado</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Acciones</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-border" id="lotesTableBody">
@@ -1078,6 +1090,11 @@
                   <td class="px-6 py-4 text-sm font-medium text-text-dark">12.450</td>
                   <td class="px-6 py-4"><span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium">Pendiente</span></td>
                   <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">En Proceso</span></td>
+                <td class="px-6 py-4">
+                  <button onclick="event.stopPropagation(); openEditLoteModal('2026-042')" class="text-primary hover:text-primary-dark transition-colors" title="Editar lote">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </button>
+                </td>
                 </tr>
                 <tr class="hover:bg-gray-50 transition-colors lot-row" data-lote="2026-041" data-cliente="María González" data-etapa="Pendiente" data-fecha="2026-06-08">
                   <td class="px-6 py-4 text-sm font-medium text-text-dark">#2026-041</td>
@@ -1086,6 +1103,11 @@
                   <td class="px-6 py-4 text-sm font-medium text-text-dark">8.500</td>
                   <td class="px-6 py-4"><span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium">Pendiente</span></td>
                   <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">En Proceso</span></td>
+                <td class="px-6 py-4">
+                  <button onclick="event.stopPropagation(); openEditLoteModal('2026-041')" class="text-primary hover:text-primary-dark transition-colors" title="Editar lote">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </button>
+                </td>
                 </tr>
                 <tr class="hover:bg-gray-50 transition-colors lot-row" data-lote="2026-040" data-cliente="Roberto Silva" data-etapa="Sapecado" data-fecha="2026-06-08">
                   <td class="px-6 py-4 text-sm font-medium text-text-dark">#2026-040</td>
@@ -1094,6 +1116,11 @@
                   <td class="px-6 py-4 text-sm font-medium text-text-dark">12.300</td>
                   <td class="px-6 py-4"><span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-medium">Sapecado</span></td>
                   <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">En Proceso</span></td>
+                <td class="px-6 py-4">
+                  <button onclick="event.stopPropagation(); openEditLoteModal('2026-040')" class="text-primary hover:text-primary-dark transition-colors" title="Editar lote">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </button>
+                </td>
                 </tr>
                 <tr class="hover:bg-gray-50 transition-colors lot-row" data-lote="2026-039" data-cliente="Carlos Martínez" data-etapa="Sapecado" data-fecha="2026-06-07">
                   <td class="px-6 py-4 text-sm font-medium text-text-dark">#2026-039</td>
@@ -1102,6 +1129,11 @@
                   <td class="px-6 py-4 text-sm font-medium text-text-dark">18.200</td>
                   <td class="px-6 py-4"><span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-medium">Sapecado</span></td>
                   <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">En Proceso</span></td>
+                <td class="px-6 py-4">
+                  <button onclick="event.stopPropagation(); openEditLoteModal('2026-039')" class="text-primary hover:text-primary-dark transition-colors" title="Editar lote">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </button>
+                </td>
                 </tr>
                 <tr class="hover:bg-gray-50 transition-colors lot-row" data-lote="2026-038" data-cliente="Ana López" data-etapa="Secado" data-fecha="2026-06-07">
                   <td class="px-6 py-4 text-sm font-medium text-text-dark">#2026-038</td>
@@ -1110,6 +1142,11 @@
                   <td class="px-6 py-4 text-sm font-medium text-text-dark">9.800</td>
                   <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">Secado</span></td>
                   <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">En Proceso</span></td>
+                <td class="px-6 py-4">
+                  <button onclick="event.stopPropagation(); openEditLoteModal('2026-038')" class="text-primary hover:text-primary-dark transition-colors" title="Editar lote">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </button>
+                </td>
                 </tr>
                 <tr class="hover:bg-gray-50 transition-colors lot-row" data-lote="2026-037" data-cliente="Pedro Sánchez" data-etapa="Secado" data-fecha="2026-06-06">
                   <td class="px-6 py-4 text-sm font-medium text-text-dark">#2026-037</td>
@@ -1118,6 +1155,11 @@
                   <td class="px-6 py-4 text-sm font-medium text-text-dark">22.100</td>
                   <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">Secado</span></td>
                   <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">En Proceso</span></td>
+                <td class="px-6 py-4">
+                  <button onclick="event.stopPropagation(); openEditLoteModal('2026-037')" class="text-primary hover:text-primary-dark transition-colors" title="Editar lote">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </button>
+                </td>
                 </tr>
                 <tr class="hover:bg-gray-50 transition-colors lot-row" data-lote="2026-036" data-cliente="Diego Torres" data-etapa="Molienda" data-fecha="2026-06-05">
                   <td class="px-6 py-4 text-sm font-medium text-text-dark">#2026-036</td>
@@ -1126,6 +1168,11 @@
                   <td class="px-6 py-4 text-sm font-medium text-text-dark">11.500</td>
                   <td class="px-6 py-4"><span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-medium">Molienda</span></td>
                   <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">En Proceso</span></td>
+                <td class="px-6 py-4">
+                  <button onclick="event.stopPropagation(); openEditLoteModal('2026-036')" class="text-primary hover:text-primary-dark transition-colors" title="Editar lote">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </button>
+                </td>
                 </tr>
                 <tr class="hover:bg-gray-50 transition-colors lot-row" data-lote="2026-035" data-cliente="Laura Fernández" data-etapa="Molienda" data-fecha="2026-06-04">
                   <td class="px-6 py-4 text-sm font-medium text-text-dark">#2026-035</td>
@@ -1134,6 +1181,11 @@
                   <td class="px-6 py-4 text-sm font-medium text-text-dark">14.000</td>
                   <td class="px-6 py-4"><span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-medium">Molienda</span></td>
                   <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Finalizado</span></td>
+                <td class="px-6 py-4">
+                  <button onclick="event.stopPropagation(); openEditLoteModal('2026-035')" class="text-primary hover:text-primary-dark transition-colors" title="Editar lote">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </button>
+                </td>
                 </tr>
                 <tr class="hover:bg-gray-50 transition-colors lot-row" data-lote="2026-034" data-cliente="Sofía Ramírez" data-etapa="Envío" data-fecha="2026-06-03">
                   <td class="px-6 py-4 text-sm font-medium text-text-dark">#2026-034</td>
@@ -1142,6 +1194,11 @@
                   <td class="px-6 py-4 text-sm font-medium text-text-dark">7.800</td>
                   <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Envío</span></td>
                   <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Finalizado</span></td>
+                <td class="px-6 py-4">
+                  <button onclick="event.stopPropagation(); openEditLoteModal('2026-034')" class="text-primary hover:text-primary-dark transition-colors" title="Editar lote">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </button>
+                </td>
                 </tr>
                 <tr class="hover:bg-gray-50 transition-colors lot-row" data-lote="2026-033" data-cliente="Juan Pérez" data-etapa="Molienda" data-fecha="2026-06-02">
                   <td class="px-6 py-4 text-sm font-medium text-text-dark">#2026-033</td>
@@ -1150,9 +1207,14 @@
                   <td class="px-6 py-4 text-sm font-medium text-text-dark">15.200</td>
                   <td class="px-6 py-4"><span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-medium">Molienda</span></td>
                   <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">En Proceso</span></td>
+                <td class="px-6 py-4">
+                  <button onclick="event.stopPropagation(); openEditLoteModal('2026-033')" class="text-primary hover:text-primary-dark transition-colors" title="Editar lote">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </button>
+                </td>
                 </tr>
                 <tr id="noResultsRow" class="hidden">
-                  <td colspan="6" class="px-6 py-8 text-center text-sm text-text-muted">
+                  <td colspan="7" class="px-6 py-8 text-center text-sm text-text-muted">
                     <i class="fa-solid fa-circle-info mr-2 text-text-muted"></i>No se encontraron lotes con los filtros seleccionados.
                   </td>
                 </tr>
@@ -1408,6 +1470,40 @@
             <button onclick="toggleModal('crearOrdenModal')" class="px-6 py-3 rounded-xl border border-border text-text-muted hover:bg-gray-50 transition-all font-medium">Cancelar</button>
             <button onclick="confirmarCrearOrden()" class="px-6 py-3 rounded-xl bg-primary text-white hover:bg-primary-light transition-all font-medium shadow-md">Crear Orden</button>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Lote Modal (UC-09) -->
+  <div id="editLoteModal" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" onclick="toggleModal('editLoteModal')"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative z-10">
+        <div class="p-6 border-b border-border flex items-center justify-between">
+          <h3 class="font-display text-xl font-bold text-primary">Editar Lote <span id="editLoteId"></span></h3>
+          <button onclick="toggleModal('editLoteModal')" class="p-2 rounded-lg hover:bg-gray-100 transition-colors text-text-muted">
+            <i class="fa-solid fa-xmark text-xl"></i>
+          </button>
+        </div>
+        <div class="p-6 space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-text-dark mb-1">Peso Bruto (kg) <span class="text-red-500">*</span></label>
+            <input type="number" id="editPesoBruto" min="0" step="0.001" class="w-full px-4 py-2 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" oninput="calcularNetoEdicion()">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-text-dark mb-1">Peso Tara (kg) <span class="text-red-500">*</span></label>
+            <input type="number" id="editPesoTara" min="0" step="0.001" class="w-full px-4 py-2 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" oninput="calcularNetoEdicion()">
+          </div>
+          <div class="bg-accent/10 rounded-xl p-4 border border-accent/20">
+            <p class="text-sm text-text-muted">Peso Neto Calculado</p>
+            <p id="editPesoNetoDisplay" class="text-2xl font-bold text-accent">0.000 kg</p>
+          </div>
+          <p class="text-xs text-gray-500"><span class="text-red-500">*</span> Campos obligatorios</p>
+        </div>
+        <div class="p-6 border-t border-border flex justify-end gap-3">
+          <button onclick="toggleModal('editLoteModal')" class="px-6 py-2 rounded-xl border border-border text-text-muted hover:bg-gray-50 transition-all font-medium">Cancelar</button>
+          <button onclick="guardarCambiosLote()" class="px-6 py-2 rounded-xl bg-primary text-white hover:bg-primary-light transition-all font-medium shadow-md">Guardar Cambios</button>
         </div>
       </div>
     </div>
@@ -2690,6 +2786,105 @@
         selectOrden(selectedOrdenId);
         renderOrdenes();
       }
+    }
+
+    // ==================== UC-11: BUSCAR CLIENTE ====================
+    function filtrarClientes() {
+      const search = document.getElementById('searchClientes').value.toLowerCase().trim();
+      const rows = document.querySelectorAll('#clientesTableBody tr');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const nombre = (row.getAttribute('data-nombre') || '').toLowerCase();
+        const apellido = (row.getAttribute('data-apellido') || '').toLowerCase();
+        const inym = (row.getAttribute('data-inym') || '').toLowerCase();
+        const dni = (row.getAttribute('data-dni') || '').toLowerCase();
+        const telefono = (row.getAttribute('data-telefono') || '').toLowerCase();
+        const email = (row.getAttribute('data-email') || '').toLowerCase();
+        
+        const match = nombre.includes(search) || 
+                      apellido.includes(search) || 
+                      inym.includes(search) || 
+                      dni.includes(search) || 
+                      telefono.includes(search) ||
+                      email.includes(search);
+        
+        if (match || search === '') {
+          row.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          row.classList.add('hidden');
+        }
+      });
+
+      // Show/hide empty state
+      let emptyRow = document.getElementById('clientesEmptyRow');
+      if (visibleCount === 0 && search !== '') {
+        if (!emptyRow) {
+          emptyRow = document.createElement('tr');
+          emptyRow.id = 'clientesEmptyRow';
+          emptyRow.innerHTML = `<td colspan="6" class="text-center py-8 text-gray-500"><i class="fa-solid fa-search text-2xl mb-2 block"></i>No se encontraron clientes con ese criterio</td>`;
+          document.getElementById('clientesTableBody').appendChild(emptyRow);
+        }
+        emptyRow.classList.remove('hidden');
+      } else if (emptyRow) {
+        emptyRow.classList.add('hidden');
+      }
+    }
+
+    // ==================== UC-09: MODIFICAR REGISTRO DE LOTE ====================
+    let editingLoteId = null;
+
+    function openEditLoteModal(loteId) {
+      editingLoteId = loteId;
+      const lote = lotTraceData[loteId];
+      if (!lote || !lote.pesaje) {
+        showToast('No se encontró el lote', 'error');
+        return;
+      }
+      
+      document.getElementById('editLoteId').textContent = '#' + loteId;
+      document.getElementById('editPesoBruto').value = lote.pesaje.bruto.replace(' kg', '').replace(/\./g, '');
+      document.getElementById('editPesoTara').value = lote.pesaje.tara.replace(' kg', '').replace(/\./g, '');
+      calcularNetoEdicion();
+      toggleModal('editLoteModal');
+    }
+
+    function calcularNetoEdicion() {
+      const bruto = parseFloat(document.getElementById('editPesoBruto').value) || 0;
+      const tara = parseFloat(document.getElementById('editPesoTara').value) || 0;
+      const neto = Math.max(0, bruto - tara);
+      document.getElementById('editPesoNetoDisplay').textContent = neto.toLocaleString('es-AR', {minimumFractionDigits: 3}) + ' kg';
+    }
+
+    function guardarCambiosLote() {
+      if (!editingLoteId) return;
+      const lote = lotTraceData[editingLoteId];
+      if (!lote) return;
+      
+      const bruto = parseFloat(document.getElementById('editPesoBruto').value) || 0;
+      const tara = parseFloat(document.getElementById('editPesoTara').value) || 0;
+      
+      if (bruto <= 0 || tara < 0 || tara >= bruto) {
+        showToast('El peso bruto debe ser mayor que la tara', 'error');
+        return;
+      }
+      
+      const neto = bruto - tara;
+      
+      lote.pesaje.bruto = bruto.toLocaleString('es-AR', {minimumFractionDigits: 3}) + ' kg';
+      lote.pesaje.tara = tara.toLocaleString('es-AR', {minimumFractionDigits: 3}) + ' kg';
+      lote.pesaje.neto = neto.toLocaleString('es-AR', {minimumFractionDigits: 3}) + ' kg';
+      
+      showToast('Lote actualizado exitosamente', 'success');
+      toggleModal('editLoteModal');
+      
+      // Refresh listado if visible
+      if (!document.getElementById('listado-lotes').classList.contains('hidden')) {
+        applyFilters();
+      }
+      
+      editingLoteId = null;
     }
 
     // Initialize
