@@ -384,7 +384,12 @@
             <span class="font-medium">Listado de Lotes</span>
           </a>
         </li>
-
+        <li class="admin-only">
+          <a href="#" onclick="showSection('ordenes-produccion'); return false;" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/10">
+            <i class="fa-solid fa-industry w-5 text-center"></i>
+            <span class="font-medium">Órdenes de Producción</span>
+          </a>
+        </li>
       </ul>
     </nav>
 
@@ -1175,6 +1180,125 @@
         </div>
       </section>
 
+      <!-- ==================== ÓRDENES DE PRODUCCIÓN SECTION ==================== -->
+      <section id="ordenes-produccion" class="hidden space-y-6">
+        <!-- Header -->
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="font-display text-2xl font-bold text-primary">Órdenes de Producción</h2>
+            <p class="text-sm text-text-muted mt-1">Gestión de órdenes y avance de etapas</p>
+          </div>
+          <button onclick="openCrearOrdenModal()" class="px-6 py-3 rounded-xl bg-primary text-white hover:bg-primary-light transition-all font-medium shadow-md flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i>Crear Orden
+          </button>
+        </div>
+
+        <!-- Buscador -->
+        <div class="bg-white rounded-xl shadow-lg border border-border p-4">
+          <div class="flex items-center gap-4">
+            <div class="relative flex-1">
+              <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-text-muted"></i>
+              <input type="text" id="searchOrdenes" oninput="filtrarOrdenes()" class="w-full pl-12 pr-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Buscar por ID o fecha...">
+            </div>
+          </div>
+        </div>
+
+        <!-- Listado de Órdenes -->
+        <div class="bg-white rounded-xl shadow-lg border border-border overflow-hidden">
+          <div class="p-6 border-b border-border">
+            <h3 class="font-display text-lg font-bold text-primary">Listado de Órdenes</h3>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-gray-50 border-b border-border">
+                <tr>
+                  <th class="text-left px-6 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider">ID</th>
+                  <th class="text-left px-6 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider">Fecha Inicio</th>
+                  <th class="text-left px-6 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider">Peso Total</th>
+                  <th class="text-left px-6 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider">Estado</th>
+                  <th class="text-left px-6 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider">Lotes</th>
+                  <th class="text-right px-6 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="ordenesTableBody" class="divide-y divide-border">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+          <div id="ordenesEmptyState" class="hidden text-center py-8 text-gray-500">
+            <i class="fa-solid fa-clipboard-list text-3xl mb-2"></i>
+            <p>No se encontraron órdenes</p>
+          </div>
+        </div>
+
+        <!-- Detalle de Orden Seleccionada -->
+        <div id="ordenDetailPanel" class="hidden bg-white rounded-xl shadow-lg border border-border p-6">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h3 class="font-display text-lg font-bold text-primary" id="detailOrdenId">Orden OP-001</h3>
+              <p class="text-sm text-text-muted" id="detailOrdenInfo">Fecha: 10/06/2025 | Peso: 15.200 kg</p>
+            </div>
+            <span id="detailOrdenEstado" class="px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">En proceso</span>
+          </div>
+
+          <!-- Lotes de la orden -->
+          <div class="mb-6">
+            <h4 class="text-sm font-semibold text-text-dark mb-3">Lotes incluidos</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full border border-border rounded-lg">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="text-left px-4 py-2 text-xs font-semibold">N° Lote</th>
+                    <th class="text-left px-4 py-2 text-xs font-semibold">Cliente</th>
+                    <th class="text-right px-4 py-2 text-xs font-semibold">Peso</th>
+                    <th class="text-left px-4 py-2 text-xs font-semibold">Etapa Actual</th>
+                  </tr>
+                </thead>
+                <tbody id="ordenLotesTable" class="divide-y divide-border">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Avance de Etapa -->
+          <div class="bg-gray-50 rounded-xl p-4 border border-border">
+            <h4 class="text-sm font-semibold text-text-dark mb-3">Registrar Avance</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div>
+                <label class="block text-sm font-medium text-text-dark mb-1">Etapa a registrar</label>
+                <select id="etapaSelector" class="w-full px-4 py-2 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                  <option value="">Seleccionar...</option>
+                  <option value="sapecado">Sapecado</option>
+                  <option value="secado">Secado</option>
+                  <option value="molienda">Molienda</option>
+                  <option value="envio">Envío</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-text-dark mb-1">Fecha inicio</label>
+                <input type="date" id="etapaFechaInicio" class="w-full px-4 py-2 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-text-dark mb-1">Tiempo estimado (hs)</label>
+                <input type="number" id="etapaTiempo" class="w-full px-4 py-2 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: 4">
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <button onclick="registrarAvance()" class="px-6 py-2 rounded-xl bg-primary text-white hover:bg-primary-light transition-all font-medium shadow-md">
+                <i class="fa-solid fa-check mr-2"></i>Registrar Avance
+              </button>
+              <button onclick="registrarFinProceso()" id="btnFinProceso" class="px-6 py-2 rounded-xl bg-accent text-white hover:bg-accent-brown transition-all font-medium shadow-md">
+                <i class="fa-solid fa-flag-checkered mr-2"></i>Registrar Fin de Proceso
+              </button>
+              <button onclick="registrarEnvio()" id="btnRegistrarEnvio" class="px-6 py-2 rounded-xl bg-secondary text-white hover:bg-primary-light transition-all font-medium shadow-md">
+                <i class="fa-solid fa-truck mr-2"></i>Registrar Envío
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </div>
   </main>
 
@@ -1261,6 +1385,34 @@
     </div>
   </div>
 
+  <!-- Crear Orden Modal -->
+  <div id="crearOrdenModal" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" onclick="toggleModal('crearOrdenModal')"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative z-10">
+        <div class="p-6 border-b border-border flex items-center justify-between sticky top-0 bg-white rounded-t-2xl">
+          <h3 class="font-display text-xl font-bold text-primary">Crear Orden de Producción</h3>
+          <button onclick="toggleModal('crearOrdenModal')" class="p-2 rounded-lg hover:bg-gray-100 transition-colors text-text-muted">
+            <i class="fa-solid fa-xmark text-xl"></i>
+          </button>
+        </div>
+        <div class="p-6">
+          <p class="text-sm text-text-muted mb-4">Seleccione los lotes pendientes para formar la orden. El peso total debe ser de al menos 15.000 kg.</p>
+          <div class="bg-lightgreen/50 rounded-lg p-3 mb-4 border border-primary/20">
+            <p class="text-sm text-primary font-medium"><i class="fa-solid fa-weight-hanging mr-1"></i> Peso acumulado: <span id="pesoAcumulado" class="font-bold">0</span> kg</p>
+          </div>
+          <div id="lotesDisponiblesList" class="space-y-2 max-h-80 overflow-y-auto">
+            <!-- Checkboxes de lotes -->
+          </div>
+          <div class="mt-6 flex justify-end gap-3">
+            <button onclick="toggleModal('crearOrdenModal')" class="px-6 py-3 rounded-xl border border-border text-text-muted hover:bg-gray-50 transition-all font-medium">Cancelar</button>
+            <button onclick="confirmarCrearOrden()" class="px-6 py-3 rounded-xl bg-primary text-white hover:bg-primary-light transition-all font-medium shadow-md">Crear Orden</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================== JAVASCRIPT ==================== -->
   <script>
     // Navigation state
@@ -1314,7 +1466,7 @@
       document.getElementById('mainContent').classList.add('hidden');
       document.getElementById('mobileHeader').classList.add('hidden');
       // Hide all sections inside main
-      const sections = ['dashboard', 'clientes', 'registro-lote', 'listado-lotes'];
+      const sections = ['dashboard', 'clientes', 'registro-lote', 'listado-lotes', 'ordenes-produccion'];
       sections.forEach(id => {
         document.getElementById(id).classList.add('hidden');
       });
@@ -1326,7 +1478,7 @@
     // Show specific section
     function showSection(sectionId) {
       // Hide all sections
-      const sections = ['dashboard', 'clientes', 'registro-lote', 'listado-lotes'];
+      const sections = ['dashboard', 'clientes', 'registro-lote', 'listado-lotes', 'ordenes-produccion'];
       sections.forEach(id => {
         document.getElementById(id).classList.add('hidden');
       });
@@ -1339,7 +1491,8 @@
         'dashboard': 'Dashboard',
         'clientes': 'Gestión de Clientes',
         'registro-lote': 'Registro de Lote',
-        'listado-lotes': 'Listado de Lotes'
+        'listado-lotes': 'Listado de Lotes',
+        'ordenes-produccion': 'Órdenes de Producción'
       };
       document.getElementById('pageTitle').textContent = titles[sectionId] || '';
 
@@ -1790,6 +1943,16 @@
         ]
       }
     };
+
+    // ==================== ÓRDENES DE PRODUCCIÓN ====================
+    const ordenesProduccion = [
+      { id: 'OP-001', fechaInicio: '10/06/2025', pesoTotal: 15200, estado: 'En proceso', lotes: ['2025-001'] },
+      { id: 'OP-002', fechaInicio: '12/06/2025', pesoTotal: 18750, estado: 'Pendiente', lotes: ['2025-002'] },
+      { id: 'OP-003', fechaInicio: '05/06/2025', pesoTotal: 9200, estado: 'En proceso', lotes: ['2025-003'] },
+      { id: 'OP-004', fechaInicio: '01/06/2025', pesoTotal: 20400, estado: 'Finalizado', lotes: ['2025-004'] }
+    ];
+
+    let selectedOrdenId = null;
 
     function openClientDetail(clientName) {
       const client = clientData[clientName];
@@ -2291,6 +2454,246 @@
         openTrazabilidadModal(this.getAttribute('data-lote'));
       });
     });
+
+    // ==================== ÓRDENES DE PRODUCCIÓN ====================
+    function renderOrdenes() {
+      const tbody = document.getElementById('ordenesTableBody');
+      const search = document.getElementById('searchOrdenes').value.toLowerCase();
+      const filtered = ordenesProduccion.filter(o => 
+        o.id.toLowerCase().includes(search) || 
+        o.fechaInicio.includes(search)
+      );
+      
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        document.getElementById('ordenesEmptyState').classList.remove('hidden');
+        return;
+      }
+      document.getElementById('ordenesEmptyState').classList.add('hidden');
+      
+      tbody.innerHTML = filtered.map(orden => {
+        const estadoClass = orden.estado === 'Finalizado' ? 'bg-green-100 text-green-700' : 
+                          orden.estado === 'En proceso' ? 'bg-amber-100 text-amber-700' : 
+                          'bg-gray-100 text-gray-600';
+        return `
+          <tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="selectOrden('${orden.id}')">
+            <td class="px-6 py-4 font-medium text-text-dark">${orden.id}</td>
+            <td class="px-6 py-4 text-text-muted">${orden.fechaInicio}</td>
+            <td class="px-6 py-4 font-medium text-text-dark">${orden.pesoTotal.toLocaleString()} kg</td>
+            <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-xs font-medium ${estadoClass}">${orden.estado}</span></td>
+            <td class="px-6 py-4 text-text-muted">${orden.lotes.length} lote(s)</td>
+            <td class="px-6 py-4 text-right">
+              <button onclick="event.stopPropagation(); eliminarOrden('${orden.id}')" class="text-red-600 hover:text-red-800 transition-colors" title="Eliminar orden">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filtrarOrdenes() {
+      renderOrdenes();
+    }
+
+    function selectOrden(ordenId) {
+      selectedOrdenId = ordenId;
+      const orden = ordenesProduccion.find(o => o.id === ordenId);
+      if (!orden) return;
+      
+      document.getElementById('ordenDetailPanel').classList.remove('hidden');
+      document.getElementById('detailOrdenId').textContent = 'Orden ' + orden.id;
+      document.getElementById('detailOrdenInfo').textContent = `Fecha: ${orden.fechaInicio} | Peso: ${orden.pesoTotal.toLocaleString()} kg`;
+      
+      const estadoClass = orden.estado === 'Finalizado' ? 'bg-green-100 text-green-700' : 
+                        orden.estado === 'En proceso' ? 'bg-amber-100 text-amber-700' : 
+                        'bg-gray-100 text-gray-600';
+      const estadoEl = document.getElementById('detailOrdenEstado');
+      estadoEl.className = `px-3 py-1 rounded-full text-xs font-medium ${estadoClass}`;
+      estadoEl.textContent = orden.estado;
+      
+      // Render lotes de la orden
+      const lotesTbody = document.getElementById('ordenLotesTable');
+      lotesTbody.innerHTML = orden.lotes.map(loteId => {
+        const lote = lotTraceData[loteId];
+        if (!lote) return '';
+        const etapaActual = lote.etapas.find(e => e.status === 'actual');
+        const etapaNombre = etapaActual ? etapaActual.nombre : 'Pendiente';
+        return `
+          <tr>
+            <td class="px-4 py-2 font-medium">#${loteId}</td>
+            <td class="px-4 py-2">${lote.cliente}</td>
+            <td class="px-4 py-2 text-right">${lote.pesaje ? lote.pesaje.neto : lote.pesoInicial}</td>
+            <td class="px-4 py-2"><span class="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-700">${etapaNombre}</span></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openCrearOrdenModal() {
+      const disponibles = Object.entries(lotTraceData).filter(([id, data]) => {
+        return data.etapas && (data.etapas[0]?.status === 'actual' || data.etapas[0]?.status === 'pendiente');
+      });
+      
+      const list = document.getElementById('lotesDisponiblesList');
+      if (disponibles.length === 0) {
+        list.innerHTML = '<p class="text-center text-gray-500 py-4">No hay lotes disponibles para crear una orden.</p>';
+      } else {
+        list.innerHTML = disponibles.map(([id, data]) => `
+          <label class="flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-gray-50 cursor-pointer transition-colors">
+            <input type="checkbox" value="${id}" onchange="actualizarPesoAcumulado()" class="w-5 h-5 rounded border-border text-primary focus:ring-primary">
+            <div class="flex-1">
+              <p class="font-medium text-text-dark">Lote #${id}</p>
+              <p class="text-xs text-text-muted">${data.cliente} — ${data.pesaje ? data.pesaje.neto : data.pesoInicial}</p>
+            </div>
+          </label>
+        `).join('');
+      }
+      
+      document.getElementById('pesoAcumulado').textContent = '0';
+      toggleModal('crearOrdenModal');
+    }
+
+    function actualizarPesoAcumulado() {
+      const checkboxes = document.querySelectorAll('#lotesDisponiblesList input[type="checkbox"]:checked');
+      let total = 0;
+      checkboxes.forEach(cb => {
+        const lote = lotTraceData[cb.value];
+        if (lote) {
+          const peso = parseFloat((lote.pesaje ? lote.pesaje.neto : lote.pesoInicial).replace(/[^\d.]/g, ''));
+          total += peso;
+        }
+      });
+      document.getElementById('pesoAcumulado').textContent = total.toLocaleString();
+    }
+
+    function confirmarCrearOrden() {
+      const peso = parseInt(document.getElementById('pesoAcumulado').textContent.replace(/,/g, ''));
+      if (peso < 15000) {
+        showToast('El peso total debe ser de al menos 15.000 kg', 'error');
+        return;
+      }
+      
+      const checkboxes = document.querySelectorAll('#lotesDisponiblesList input[type="checkbox"]:checked');
+      const lotesSeleccionados = Array.from(checkboxes).map(cb => cb.value);
+      
+      const newId = 'OP-' + String(ordenesProduccion.length + 1).padStart(3, '0');
+      const today = new Date().toLocaleDateString('es-AR');
+      
+      ordenesProduccion.push({
+        id: newId,
+        fechaInicio: today,
+        pesoTotal: peso,
+        estado: 'Pendiente',
+        lotes: lotesSeleccionados
+      });
+      
+      showToast('Orden creada exitosamente', 'success');
+      toggleModal('crearOrdenModal');
+      renderOrdenes();
+    }
+
+    function eliminarOrden(ordenId) {
+      const orden = ordenesProduccion.find(o => o.id === ordenId);
+      if (!orden) return;
+      if (orden.estado !== 'Pendiente') {
+        showToast('Solo se pueden eliminar órdenes pendientes', 'error');
+        return;
+      }
+      if (!confirm('¿Está seguro que desea eliminar la orden ' + ordenId + '?')) return;
+      
+      const idx = ordenesProduccion.findIndex(o => o.id === ordenId);
+      if (idx > -1) {
+        ordenesProduccion.splice(idx, 1);
+        showToast('Orden eliminada', 'success');
+        renderOrdenes();
+        document.getElementById('ordenDetailPanel').classList.add('hidden');
+      }
+    }
+
+    function registrarAvance() {
+      if (!selectedOrdenId) return;
+      const etapa = document.getElementById('etapaSelector').value;
+      if (!etapa) {
+        showToast('Seleccione una etapa', 'error');
+        return;
+      }
+      
+      const orden = ordenesProduccion.find(o => o.id === selectedOrdenId);
+      if (orden) {
+        orden.lotes.forEach(loteId => {
+          const lote = lotTraceData[loteId];
+          if (lote && lote.etapas) {
+            const etapaIndex = lote.etapas.findIndex(e => e.nombre.toLowerCase() === etapa);
+            if (etapaIndex >= 0) {
+              for (let i = 0; i < etapaIndex; i++) {
+                lote.etapas[i].status = 'completado';
+              }
+              lote.etapas[etapaIndex].status = 'actual';
+              const fecha = document.getElementById('etapaFechaInicio').value;
+              if (fecha) lote.etapas[etapaIndex].inicio = fecha;
+            }
+          }
+        });
+        
+        if (orden.estado === 'Pendiente') orden.estado = 'En proceso';
+        showToast('Avance registrado exitosamente', 'success');
+        selectOrden(selectedOrdenId);
+        renderOrdenes();
+      }
+    }
+
+    function registrarFinProceso() {
+      if (!selectedOrdenId) return;
+      const pesoFinal = prompt('Ingrese el peso final del lote (kg):');
+      if (!pesoFinal || isNaN(pesoFinal)) {
+        showToast('Peso final inválido', 'error');
+        return;
+      }
+      
+      const orden = ordenesProduccion.find(o => o.id === selectedOrdenId);
+      if (orden) {
+        orden.estado = 'Finalizado';
+        orden.lotes.forEach(loteId => {
+          const lote = lotTraceData[loteId];
+          if (lote) {
+            lote.pesoActual = pesoFinal + ' kg';
+            const inicial = parseFloat(lote.pesoInicial.replace(/[^\d.]/g, ''));
+            const final = parseFloat(pesoFinal);
+            const perdida = inicial - final;
+            const porcentaje = ((perdida / inicial) * 100).toFixed(1);
+            lote.perdida = perdida + ' kg (' + porcentaje + '%)';
+          }
+        });
+        showToast('Proceso finalizado', 'success');
+        selectOrden(selectedOrdenId);
+        renderOrdenes();
+      }
+    }
+
+    function registrarEnvio() {
+      if (!selectedOrdenId) return;
+      const orden = ordenesProduccion.find(o => o.id === selectedOrdenId);
+      if (orden) {
+        orden.estado = 'Finalizado';
+        orden.lotes.forEach(loteId => {
+          const lote = lotTraceData[loteId];
+          if (lote && lote.etapas) {
+            const envioIndex = lote.etapas.findIndex(e => e.nombre.toLowerCase() === 'envío');
+            if (envioIndex >= 0) {
+              lote.etapas[envioIndex].status = 'completado';
+              lote.etapas[envioIndex].fin = new Date().toLocaleDateString('es-AR');
+            }
+          }
+        });
+        showToast('Envío registrado exitosamente', 'success');
+        selectOrden(selectedOrdenId);
+        renderOrdenes();
+      }
+    }
+
+    // Initialize
+    renderOrdenes();
   </script>
 </body>
 </html>
