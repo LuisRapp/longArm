@@ -1422,11 +1422,14 @@
 
           <!-- Lotes de la orden -->
           <div class="mb-6">
-            <h4 class="text-sm font-semibold text-text-dark mb-3">Lotes incluidos</h4>
+            <h4 class="text-sm font-semibold text-text-dark mb-3">Lotes incluidos <span class="text-xs font-normal text-text-muted">(seleccione los lotes a avanzar)</span></h4>
             <div class="overflow-x-auto">
               <table class="w-full border border-border rounded-lg">
                 <thead class="bg-gray-50">
                   <tr>
+                    <th class="text-center px-4 py-2 text-xs font-semibold w-10">
+                      <input type="checkbox" id="selectAllLotes" onclick="toggleSelectAllLotes()" class="w-4 h-4 rounded border-border text-primary focus:ring-primary">
+                    </th>
                     <th class="text-left px-4 py-2 text-xs font-semibold">N° Lote</th>
                     <th class="text-left px-4 py-2 text-xs font-semibold">Cliente</th>
                     <th class="text-right px-4 py-2 text-xs font-semibold">Peso</th>
@@ -1443,7 +1446,7 @@
           <!-- Avance de Etapa -->
           <div class="bg-gray-50 rounded-xl p-4 border border-border">
             <h4 class="text-sm font-semibold text-text-dark mb-3">Registrar Avance</h4>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <label class="block text-sm font-medium text-text-dark mb-1">Etapa a registrar</label>
                 <select id="etapaSelector" class="w-full px-4 py-2 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all">
@@ -1454,6 +1457,12 @@
                   <option value="envio">Envío</option>
                 </select>
               </div>
+              <div>
+                <label class="block text-sm font-medium text-text-dark mb-1">Peso al inicio de etapa (kg) <span class="text-red-500">*</span></label>
+                <input type="number" id="etapaPesoInicio" min="0" step="0.001" class="w-full px-4 py-2 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: 12450">
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <label class="block text-sm font-medium text-text-dark mb-1">Fecha inicio</label>
                 <input type="date" id="etapaFechaInicio" class="w-full px-4 py-2 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all">
@@ -2080,6 +2089,10 @@
 
       data.etapas.forEach(e => {
         const cfg = statusConfig[e.status];
+        const perdidaVal = e.perdida !== undefined && e.perdida !== '—' && e.perdida !== '' ? e.perdida : '—';
+        const perdidaPorc = e.perdidaPorcentaje !== undefined && e.perdidaPorcentaje !== '—' ? e.perdidaPorcentaje + '%' : '';
+        const perdidaDisplay = perdidaVal !== '—' ? `${perdidaVal} kg ${perdidaPorc ? '(' + perdidaPorc + ')' : ''}` : '—';
+        
         html += `
         <div class="bg-white rounded-xl border border-border p-5 shadow-sm hover-lift ${cfg.opacity}">
           <div class="flex items-start gap-4">
@@ -2097,7 +2110,7 @@
                 <div><p class="text-text-muted text-xs">Duración</p><p class="font-medium text-text-dark">${e.duracion}</p></div>
                 <div><p class="text-text-muted text-xs">Peso Inicial</p><p class="font-medium text-text-dark">${e.pesoInicio} kg</p></div>
                 <div><p class="text-text-muted text-xs">Peso Final</p><p class="font-medium text-text-dark">${e.pesoFin} kg</p></div>
-                <div><p class="text-text-muted text-xs">Pérdida</p><p class="font-medium ${e.status === 'completado' ? 'text-red-600' : 'text-text-muted'}">${e.perdida}</p></div>
+                <div><p class="text-text-muted text-xs">Pérdida</p><p class="font-medium ${e.status === 'completado' ? 'text-red-600' : 'text-text-muted'}">${perdidaDisplay}</p></div>
               </div>
             </div>
           </div>
@@ -3007,15 +3020,20 @@
       estadoEl.className = `px-3 py-1 rounded-full text-xs font-medium ${estadoClass}`;
       estadoEl.textContent = orden.estado;
       
-      // Render lotes de la orden
+      // Render lotes de la orden con checkboxes
       const lotesTbody = document.getElementById('ordenLotesTable');
       lotesTbody.innerHTML = orden.lotes.map(loteId => {
         const lote = lotTraceData[loteId];
         if (!lote) return '';
         const etapaActual = lote.etapas.find(e => e.status === 'actual');
         const etapaNombre = etapaActual ? etapaActual.nombre : 'Pendiente';
+        const etapaIndex = lote.etapas.findIndex(e => e.status === 'actual');
+        const isDisabled = etapaNombre === 'Envío' || etapaNombre === 'Finalizado';
         return `
           <tr>
+            <td class="px-4 py-2 text-center">
+              <input type="checkbox" value="${loteId}" class="lote-checkbox w-4 h-4 rounded border-border text-primary focus:ring-primary" ${isDisabled ? 'disabled' : ''}>
+            </td>
             <td class="px-4 py-2 font-medium">#${loteId}</td>
             <td class="px-4 py-2">${lote.cliente}</td>
             <td class="px-4 py-2 text-right">${lote.pesaje ? lote.pesaje.neto : lote.pesoInicial}</td>
@@ -3023,6 +3041,16 @@
           </tr>
         `;
       }).join('');
+      
+      // Reset select all checkbox
+      document.getElementById('selectAllLotes').checked = false;
+    }
+
+    function toggleSelectAllLotes() {
+      const selectAll = document.getElementById('selectAllLotes').checked;
+      document.querySelectorAll('.lote-checkbox:not(:disabled)').forEach(cb => {
+        cb.checked = selectAll;
+      });
     }
 
     function openCrearOrdenModal() {
@@ -3115,25 +3143,92 @@
         return;
       }
       
+      const pesoInicio = parseFloat(document.getElementById('etapaPesoInicio').value);
+      if (isNaN(pesoInicio) || pesoInicio <= 0) {
+        showToast('Ingrese un peso al inicio de etapa válido', 'error');
+        return;
+      }
+      
+      const checkboxes = document.querySelectorAll('.lote-checkbox:checked');
+      if (checkboxes.length === 0) {
+        showToast('Seleccione al menos un lote para avanzar', 'error');
+        return;
+      }
+      
+      const secuencia = ['pendiente', 'sapecado', 'secado', 'molienda', 'envío'];
+      const etapaIndex = secuencia.indexOf(etapa);
+      if (etapaIndex < 0) {
+        showToast('Etapa no válida', 'error');
+        return;
+      }
+      
       const orden = ordenesProduccion.find(o => o.id === selectedOrdenId);
-      if (orden) {
-        orden.lotes.forEach(loteId => {
-          const lote = lotTraceData[loteId];
-          if (lote && lote.etapas) {
-            const etapaIndex = lote.etapas.findIndex(e => e.nombre.toLowerCase() === etapa);
-            if (etapaIndex >= 0) {
-              for (let i = 0; i < etapaIndex; i++) {
-                lote.etapas[i].status = 'completado';
-              }
-              lote.etapas[etapaIndex].status = 'actual';
-              const fecha = document.getElementById('etapaFechaInicio').value;
-              if (fecha) lote.etapas[etapaIndex].inicio = fecha;
-            }
+      if (!orden) return;
+      
+      let avanceExitoso = 0;
+      
+      checkboxes.forEach(cb => {
+        const loteId = cb.value;
+        const lote = lotTraceData[loteId];
+        if (lote && lote.etapas) {
+          const actualIndex = lote.etapas.findIndex(e => e.status === 'actual');
+          const etapaDestinoIndex = lote.etapas.findIndex(e => e.nombre.toLowerCase() === etapa);
+          
+          // Validación de secuencia
+          if (etapaDestinoIndex < 0) return;
+          
+          if (etapaDestinoIndex <= actualIndex && actualIndex >= 0) {
+            showToast(`El lote #${loteId} ya pasó o está en la etapa ${lote.etapas[etapaDestinoIndex].nombre}. No se puede repetir o retroceder.`, 'error');
+            return;
           }
-        });
-        
+          
+          if (etapaDestinoIndex > actualIndex + 1 && actualIndex >= 0) {
+            showToast(`El lote #${loteId} no puede saltar etapas. Debe estar en ${secuencia[actualIndex + 1]} primero.`, 'error');
+            return;
+          }
+          
+          // Calcular pérdida con etapa anterior
+          let pesoAnterior = 0;
+          if (actualIndex >= 0) {
+            pesoAnterior = lote.etapas[actualIndex].pesoInicio || parseFloat((lote.pesaje ? lote.pesaje.neto : lote.pesoInicial).replace(/[^\d.]/g, ''));
+          } else {
+            pesoAnterior = parseFloat((lote.pesaje ? lote.pesaje.neto : lote.pesoInicial).replace(/[^\d.]/g, ''));
+          }
+          
+          const perdida = pesoAnterior - pesoInicio;
+          const porcentaje = pesoAnterior > 0 ? ((perdida / pesoAnterior) * 100).toFixed(2) : '0.00';
+          
+          // Marcar etapas anteriores como completadas
+          for (let i = 0; i < etapaDestinoIndex; i++) {
+            lote.etapas[i].status = 'completado';
+          }
+          
+          lote.etapas[etapaDestinoIndex].status = 'actual';
+          lote.etapas[etapaDestinoIndex].pesoInicio = pesoInicio;
+          lote.etapas[etapaDestinoIndex].perdida = perdida;
+          lote.etapas[etapaDestinoIndex].perdidaPorcentaje = porcentaje;
+          
+          const fecha = document.getElementById('etapaFechaInicio').value;
+          if (fecha) lote.etapas[etapaDestinoIndex].inicio = fecha;
+          
+          const tiempo = document.getElementById('etapaTiempo').value;
+          if (tiempo) lote.etapas[etapaDestinoIndex].duracion = tiempo;
+          
+          avanceExitoso++;
+        }
+      });
+      
+      if (avanceExitoso > 0) {
         if (orden.estado === 'Pendiente') orden.estado = 'En proceso';
-        showToast('Avance registrado exitosamente', 'success');
+        showToast(`Avance registrado exitosamente en ${avanceExitoso} lote(s)`, 'success');
+        
+        // Limpiar formulario
+        document.getElementById('etapaSelector').value = '';
+        document.getElementById('etapaPesoInicio').value = '';
+        document.getElementById('etapaFechaInicio').value = '';
+        document.getElementById('etapaTiempo').value = '';
+        document.getElementById('selectAllLotes').checked = false;
+        
         selectOrden(selectedOrdenId);
         renderOrdenes();
       }
@@ -3141,6 +3236,13 @@
 
     function registrarFinProceso() {
       if (!selectedOrdenId) return;
+      
+      const checkboxes = document.querySelectorAll('.lote-checkbox:checked');
+      if (checkboxes.length === 0) {
+        showToast('Seleccione al menos un lote para finalizar', 'error');
+        return;
+      }
+      
       const pesoFinal = prompt('Ingrese el peso final del lote (kg):');
       if (!pesoFinal || isNaN(pesoFinal)) {
         showToast('Peso final inválido', 'error');
@@ -3149,8 +3251,8 @@
       
       const orden = ordenesProduccion.find(o => o.id === selectedOrdenId);
       if (orden) {
-        orden.estado = 'Finalizado';
-        orden.lotes.forEach(loteId => {
+        checkboxes.forEach(cb => {
+          const loteId = cb.value;
           const lote = lotTraceData[loteId];
           if (lote) {
             lote.pesoActual = pesoFinal + ' kg';
@@ -3159,8 +3261,30 @@
             const perdida = inicial - final;
             const porcentaje = ((perdida / inicial) * 100).toFixed(1);
             lote.perdida = perdida + ' kg (' + porcentaje + '%)';
+            
+            // Marcar la última etapa actual como completada
+            const actualIndex = lote.etapas.findIndex(e => e.status === 'actual');
+            if (actualIndex >= 0) {
+              lote.etapas[actualIndex].status = 'completado';
+              lote.etapas[actualIndex].pesoFin = parseFloat(pesoFinal);
+              lote.etapas[actualIndex].fin = new Date().toLocaleDateString('es-AR');
+              
+              // Calcular pérdida de esta última etapa
+              const pesoInicioEtapa = lote.etapas[actualIndex].pesoInicio || inicial;
+              const perdidaEtapa = pesoInicioEtapa - parseFloat(pesoFinal);
+              lote.etapas[actualIndex].perdida = perdidaEtapa;
+              lote.etapas[actualIndex].perdidaPorcentaje = pesoInicioEtapa > 0 ? ((perdidaEtapa / pesoInicioEtapa) * 100).toFixed(2) : '0.00';
+            }
           }
         });
+        
+        // Verificar si todos los lotes están finalizados
+        const todosFinalizados = orden.lotes.every(lid => {
+          const lote = lotTraceData[lid];
+          return lote && !lote.etapas.some(e => e.status === 'actual');
+        });
+        if (todosFinalizados) orden.estado = 'Finalizado';
+        
         showToast('Proceso finalizado', 'success');
         selectOrden(selectedOrdenId);
         renderOrdenes();
@@ -3169,19 +3293,43 @@
 
     function registrarEnvio() {
       if (!selectedOrdenId) return;
+      
+      const checkboxes = document.querySelectorAll('.lote-checkbox:checked');
+      if (checkboxes.length === 0) {
+        showToast('Seleccione al menos un lote para registrar envío', 'error');
+        return;
+      }
+      
       const orden = ordenesProduccion.find(o => o.id === selectedOrdenId);
       if (orden) {
-        orden.estado = 'Finalizado';
-        orden.lotes.forEach(loteId => {
+        checkboxes.forEach(cb => {
+          const loteId = cb.value;
           const lote = lotTraceData[loteId];
           if (lote && lote.etapas) {
             const envioIndex = lote.etapas.findIndex(e => e.nombre.toLowerCase() === 'envío');
             if (envioIndex >= 0) {
-              lote.etapas[envioIndex].status = 'completado';
-              lote.etapas[envioIndex].fin = new Date().toLocaleDateString('es-AR');
+              // Validar que esté en molienda actual
+              const actualIndex = lote.etapas.findIndex(e => e.status === 'actual');
+              if (actualIndex >= 0 && actualIndex !== envioIndex - 1) {
+                showToast(`El lote #${loteId} no está listo para envío. Debe estar en Molienda.`, 'error');
+                return;
+              }
+              
+              for (let i = 0; i < envioIndex; i++) {
+                lote.etapas[i].status = 'completado';
+              }
+              lote.etapas[envioIndex].status = 'actual';
+              lote.etapas[envioIndex].inicio = new Date().toLocaleDateString('es-AR');
             }
           }
         });
+        
+        const todosEnEnvio = orden.lotes.every(lid => {
+          const lote = lotTraceData[lid];
+          return lote && lote.etapas.some(e => e.nombre.toLowerCase() === 'envío' && e.status === 'actual');
+        });
+        if (todosEnEnvio) orden.estado = 'En proceso';
+        
         showToast('Envío registrado exitosamente', 'success');
         selectOrden(selectedOrdenId);
         renderOrdenes();
