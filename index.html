@@ -665,7 +665,7 @@
             <h2 class="font-display text-2xl font-bold text-primary">Gestión de Clientes</h2>
             <p class="text-sm text-text-muted mt-1">Administrar clientes registrados en el sistema</p>
           </div>
-          <button onclick="toggleModal('clienteModal')" class="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-light transition-all duration-200 active:scale-95 shadow-md flex items-center gap-2">
+          <button onclick="resetClienteModal(); toggleModal('clienteModal')" class="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-light transition-all duration-200 active:scale-95 shadow-md flex items-center gap-2">
             <i class="fa-solid fa-plus"></i>
             Nuevo Cliente
           </button>
@@ -686,7 +686,7 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-border">
-                <tr class="hover:bg-gray-50 transition-colors">
+                <tr class="hover:bg-gray-50 transition-colors" data-id="001" data-nombre="Juan" data-apellido="Pérez" data-inym="12345" data-dni="30123456" data-telefono="+54 3751 123456" data-email="juancito@email.com" data-direccion="Calle Falsa 123, Posadas, Misiones">
                   <td class="px-6 py-4 text-sm text-text-muted">#001</td>
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-3">
@@ -702,13 +702,13 @@
                   <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Activo</span></td>
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-2">
-                      <button onclick="editCliente()" class="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                      <button onclick="deleteCliente()" class="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                      <button onclick="editCliente(this)" class="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                      <button onclick="deleteCliente(this)" class="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
                       <button onclick="disableCliente(this)" class="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors" title="Deshabilitar"><i class="fa-solid fa-ban"></i></button>
                     </div>
                   </td>
                 </tr>
-                <tr class="hover:bg-gray-50 transition-colors">
+                <tr class="hover:bg-gray-50 transition-colors" data-id="002" data-nombre="María" data-apellido="González" data-inym="12346" data-dni="31234567" data-telefono="+54 3751 234567" data-email="mgonzalez@email.com" data-direccion="Av. Siempre Viva 456, Posadas, Misiones">
                   <td class="px-6 py-4 text-sm text-text-muted">#002</td>
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-3">
@@ -724,13 +724,13 @@
                   <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Activo</span></td>
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-2">
-                      <button onclick="editCliente()" class="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                      <button onclick="deleteCliente()" class="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                      <button onclick="editCliente(this)" class="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                      <button onclick="deleteCliente(this)" class="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
                       <button onclick="disableCliente(this)" class="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors" title="Deshabilitar"><i class="fa-solid fa-ban"></i></button>
                     </div>
                   </td>
                 </tr>
-                <tr class="hover:bg-gray-50 transition-colors">
+                <tr class="hover:bg-gray-50 transition-colors" data-id="003" data-nombre="Carlos" data-apellido="Martínez" data-inym="12347" data-dni="32345678" data-telefono="+54 3751 345678" data-email="cmartinez@email.com" data-direccion="Calle 123, Posadas, Misiones">
                   <td class="px-6 py-4 text-sm text-text-muted">#003</td>
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-3">
@@ -746,13 +746,13 @@
                   <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Activo</span></td>
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-2">
-                      <button onclick="editCliente()" class="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                      <button onclick="deleteCliente()" class="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                      <button onclick="editCliente(this)" class="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                      <button onclick="deleteCliente(this)" class="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
                       <button onclick="disableCliente(this)" class="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors" title="Deshabilitar"><i class="fa-solid fa-ban"></i></button>
                     </div>
                   </td>
                 </tr>
-                <tr class="hover:bg-gray-50 transition-colors">
+                <tr class="hover:bg-gray-50 transition-colors" data-id="004" data-nombre="Ana" data-apellido="López" data-inym="12348" data-dni="33456789" data-telefono="+54 3751 456789" data-email="alopez@email.com" data-direccion="Av. Principal 789, Posadas, Misiones">
                   <td class="px-6 py-4 text-sm text-text-muted">#004</td>
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-3">
@@ -768,13 +768,13 @@
                   <td class="px-6 py-4"><span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-medium">Inactivo</span></td>
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-2">
-                      <button onclick="editCliente()" class="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                      <button onclick="deleteCliente()" class="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                      <button onclick="editCliente(this)" class="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                      <button onclick="deleteCliente(this)" class="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
                       <button onclick="disableCliente(this)" class="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors" title="Deshabilitar"><i class="fa-solid fa-ban"></i></button>
                     </div>
                   </td>
                 </tr>
-                <tr class="hover:bg-gray-50 transition-colors">
+                <tr class="hover:bg-gray-50 transition-colors" data-id="005" data-nombre="Pedro" data-apellido="Sánchez" data-inym="12349" data-dni="34567890" data-telefono="+54 3751 567890" data-email="psanchez@email.com" data-direccion="Calle Secundaria 321, Posadas, Misiones">
                   <td class="px-6 py-4 text-sm text-text-muted">#005</td>
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-3">
@@ -790,8 +790,8 @@
                   <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Activo</span></td>
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-2">
-                      <button onclick="editCliente()" class="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                      <button onclick="deleteCliente()" class="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                      <button onclick="editCliente(this)" class="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                      <button onclick="deleteCliente(this)" class="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
                       <button onclick="disableCliente(this)" class="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors" title="Deshabilitar"><i class="fa-solid fa-ban"></i></button>
                     </div>
                   </td>
@@ -807,7 +807,7 @@
           <div class="absolute inset-0 flex items-center justify-center p-4">
             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative z-10">
               <div class="p-6 border-b border-border flex items-center justify-between">
-                <h3 class="font-display text-xl font-bold text-primary">Nuevo Cliente</h3>
+                <h3 id="clienteModalTitle" class="font-display text-xl font-bold text-primary">Nuevo Cliente</h3>
                 <button onclick="toggleModal('clienteModal')" class="p-2 rounded-lg hover:bg-gray-100 transition-colors text-text-muted">
                   <i class="fa-solid fa-xmark text-xl"></i>
                 </button>
@@ -820,35 +820,35 @@
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label class="block text-sm font-medium text-text-dark mb-2 required-field">Nombre</label>
-                      <input type="text" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: Juan">
+                      <input id="clienteNombre" type="text" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: Juan">
                     </div>
                     <div>
                       <label class="block text-sm font-medium text-text-dark mb-2 required-field">Apellido</label>
-                      <input type="text" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: Pérez">
+                      <input id="clienteApellido" type="text" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: Pérez">
                     </div>
                     <div>
                       <label class="block text-sm font-medium text-text-dark mb-2 required-field">N° INYM</label>
-                      <input type="text" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: 12345">
+                      <input id="clienteINYM" type="text" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: 12345">
                       <p class="validation-hint">Número de registro en el Instituto Nacional de la Yerba Mate.</p>
                     </div>
                     <div>
                       <label class="block text-sm font-medium text-text-dark mb-2 required-field">DNI</label>
-                      <input type="text" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: 30123456">
+                      <input id="clienteDNI" type="text" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: 30123456">
                       <p class="validation-hint">Sin puntos ni espacios.</p>
                     </div>
                     <div>
                       <label class="block text-sm font-medium text-text-dark mb-2 required-field">Teléfono</label>
-                      <input type="tel" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: +54 3751 123456">
+                      <input id="clienteTelefono" type="tel" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: +54 3751 123456">
                     </div>
                     <div>
                       <label class="block text-sm font-medium text-text-dark mb-2 required-field">Email</label>
-                      <input type="email" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: cliente@email.com">
+                      <input id="clienteEmail" type="email" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: cliente@email.com">
                       <p class="validation-hint">Ingrese un correo electrónico válido. Ej: nombre@dominio.com</p>
                     </div>
                   </div>
                   <div>
                     <label class="block text-sm font-medium text-text-dark mb-2 required-field">Dirección</label>
-                    <input type="text" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: Calle Falsa 123, Posadas, Misiones">
+                    <input id="clienteDireccion" type="text" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: Calle Falsa 123, Posadas, Misiones">
                   </div>
                   <div class="flex items-center gap-3 pt-4 border-t border-border">
                     <button type="button" onclick="toggleModal('clienteModal')" class="px-6 py-3 rounded-xl border border-border text-text-muted hover:bg-gray-50 transition-all font-medium">
@@ -2033,21 +2033,90 @@
     }
 
     // ==================== GESTIÓN DE CLIENTES ====================
+    let editingRow = null; // Track which row is being edited (Kendall: reutilizar datos existentes)
+
     function saveCliente() {
-      showToast('Cliente registrado exitosamente', 'success');
+      const nombre = document.getElementById('clienteNombre').value.trim();
+      const apellido = document.getElementById('clienteApellido').value.trim();
+      const inym = document.getElementById('clienteINYM').value.trim();
+      const telefono = document.getElementById('clienteTelefono').value.trim();
+      const email = document.getElementById('clienteEmail').value.trim();
+
+      if (!nombre || !apellido) {
+        showToast('Complete los campos obligatorios', 'warning');
+        return;
+      }
+
+      if (editingRow) {
+        // Edit mode: update the existing row (Sommerville: visibilidad del estado)
+        const initials = nombre[0].toUpperCase() + apellido[0].toUpperCase();
+        editingRow.setAttribute('data-nombre', nombre);
+        editingRow.setAttribute('data-apellido', apellido);
+        editingRow.setAttribute('data-inym', inym);
+        editingRow.setAttribute('data-dni', document.getElementById('clienteDNI').value.trim());
+        editingRow.setAttribute('data-telefono', telefono);
+        editingRow.setAttribute('data-email', email);
+        editingRow.setAttribute('data-direccion', document.getElementById('clienteDireccion').value.trim());
+
+        // Update visible cells
+        const cells = editingRow.querySelectorAll('td');
+        cells[0].textContent = '#' + editingRow.getAttribute('data-id');
+        cells[1].querySelector('.text-sm.font-medium').textContent = nombre + ' ' + apellido;
+        cells[1].querySelector('.text-xs').textContent = email;
+        cells[1].querySelector('.w-8').textContent = initials;
+        cells[2].textContent = inym;
+        cells[3].textContent = telefono;
+
+        showToast('Cliente actualizado exitosamente', 'success');
+      } else {
+        // Create mode: simulate a new row
+        showToast('Cliente registrado exitosamente', 'success');
+      }
+
+      resetClienteModal();
       toggleModal('clienteModal');
     }
 
-    function editCliente() {
-      if (confirm('¿Está seguro que desea editar este cliente?')) {
-        showToast('Cliente actualizado', 'success');
+    function editCliente(btn) {
+      const row = btn.closest('tr');
+      editingRow = row;
+
+      // Populate modal with existing data (Kendall Cap.12: reducir errores con datos precargados)
+      document.getElementById('clienteModalTitle').textContent = 'Editar Cliente';
+      document.getElementById('clienteNombre').value = row.getAttribute('data-nombre');
+      document.getElementById('clienteApellido').value = row.getAttribute('data-apellido');
+      document.getElementById('clienteINYM').value = row.getAttribute('data-inym');
+      document.getElementById('clienteDNI').value = row.getAttribute('data-dni');
+      document.getElementById('clienteTelefono').value = row.getAttribute('data-telefono');
+      document.getElementById('clienteEmail').value = row.getAttribute('data-email');
+      document.getElementById('clienteDireccion').value = row.getAttribute('data-direccion');
+
+      toggleModal('clienteModal');
+    }
+
+    function deleteCliente(btn) {
+      if (confirm('¿Está seguro que quiere eliminar este cliente? Esta acción no se puede deshacer.')) {
+        const row = btn.closest('tr');
+        row.style.transition = 'all 0.3s ease';
+        row.style.opacity = '0';
+        row.style.transform = 'translateX(20px)';
+        setTimeout(() => {
+          row.remove();
+          showToast('Cliente eliminado permanentemente', 'success');
+        }, 300);
       }
     }
 
-    function deleteCliente() {
-      if (confirm('¿Está seguro que quiere eliminar este cliente? Esta acción no se puede deshacer.')) {
-        showToast('Cliente eliminado', 'success');
-      }
+    function resetClienteModal() {
+      document.getElementById('clienteModalTitle').textContent = 'Nuevo Cliente';
+      document.getElementById('clienteNombre').value = '';
+      document.getElementById('clienteApellido').value = '';
+      document.getElementById('clienteINYM').value = '';
+      document.getElementById('clienteDNI').value = '';
+      document.getElementById('clienteTelefono').value = '';
+      document.getElementById('clienteEmail').value = '';
+      document.getElementById('clienteDireccion').value = '';
+      editingRow = null;
     }
 
     function disableCliente(btn) {
