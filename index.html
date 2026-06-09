@@ -2078,6 +2078,8 @@
     }
 
     function editCliente(btn) {
+      if (!confirm('¿Está seguro que desea editar este cliente?')) return;
+
       const row = btn.closest('tr');
       editingRow = row;
 
