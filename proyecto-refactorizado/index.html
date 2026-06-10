@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S.G. Brazo Largo — Sistema de Gestión para Yerbateros</title>
+
+  <!-- Google Fonts: Poppins (body) + Playfair Display (headings/logo) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- TailwindCSS v3 CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#2D5A3D',
+              dark: '#1A3A2A',
+              light: '#4A7C59',
+            },
+            secondary: '#4A7C59',
+            lightgreen: '#E8F5E9',
+            accent: {
+              DEFAULT: '#B8860B',
+              brown: '#8B4513',
+            },
+            text: {
+              dark: '#1F2937',
+              muted: '#6B7280',
+            },
+            bg: {
+              main: '#FDFCF8',
+              card: '#FFFFFF',
+            },
+            border: '#E5E7EB',
+          },
+          fontFamily: {
+            display: ['"Playfair Display"', 'serif'],
+            body: ['Poppins', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-bg-main text-text-dark antialiased">
+
+  <!-- ==================== TOAST CONTAINER ==================== -->
+  <div id="toastContainer" class="fixed top-4 right-4 z-[9999] flex flex-col gap-3 w-96 max-w-[95vw] pointer-events-none"></div>
+
+  <!-- ==================== LOGIN SECTION ==================== -->
+  <section id="login" class="min-h-screen flex items-center justify-center relative overflow-hidden">
+    <!-- Background decorative elements -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute -top-20 -left-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
+      <div class="absolute -bottom-20 -right-20 w-96 h-96 bg-accent/5 rounded-full blur-3xl"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full opacity-[0.02]" style="background-image: radial-gradient(circle, #2D5A3D 1px, transparent 1px); background-size: 30px 30px;"></div>
+    </div>
+
+    <div class="container mx-auto px-4 relative z-10">
+      <div class="flex flex-col lg:flex-row items-center justify-center gap-12 max-w-5xl mx-auto">
+        <!-- Left side: Hero / Branding -->
+        <div class="lg:w-1/2 text-center lg:text-left">
+          <div class="inline-flex items-center justify-center w-24 h-24 bg-primary/10 rounded-full mb-6">
+            <i class="fa-solid fa-leaf text-5xl text-primary"></i>
+          </div>
+          <h1 class="font-display text-5xl lg:text-6xl font-bold text-primary mb-4">
+            Brazo Largo
+          </h1>
+          <p class="text-xl text-text-muted mb-2 font-display italic">
+            Sistema de Gestión para Yerbateros
+          </p>
+          <p class="text-text-muted max-w-md mx-auto lg:mx-0">
+            Gestión integral de lotes, clientes y trazabilidad para la industria yerbatera.
+          </p>
+          <div class="mt-8 flex items-center justify-center lg:justify-start gap-4 text-sm text-text-muted">
+            <span class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-primary"></i> Trazabilidad completa</span>
+            <span class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-primary"></i> INYM integrado</span>
+          </div>
+        </div>
+
+        <!-- Right side: Login Card -->
+        <div class="lg:w-1/2 w-full max-w-md">
+          <div class="bg-white rounded-2xl shadow-xl p-8 border border-border">
+            <div class="text-center mb-8">
+              <h2 class="font-display text-2xl font-bold text-primary">Bienvenido</h2>
+              <p class="text-text-muted text-sm mt-1">Ingresá tus credenciales para continuar</p>
+            </div>
+
+            <form id="loginForm" class="space-y-6" onsubmit="event.preventDefault(); handleLogin();">
+              <div>
+                <label class="block text-sm font-medium text-text-dark mb-2 required-field">Usuario</label>
+                <div class="relative">
+                  <i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-text-muted"></i>
+                  <input type="text" value="admin" class="w-full pl-10 pr-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200" placeholder="Ingresá tu usuario">
+                </div>
+                <p class="validation-hint">Ingrese su nombre de usuario asignado.</p>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-text-dark mb-2 required-field">Contraseña</label>
+                <div class="relative">
+                  <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-text-muted"></i>
+                  <input id="passwordInput" type="password" value="password" class="w-full pl-10 pr-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200" placeholder="Ingresá tu contraseña" oninput="validatePassword()">
+                </div>
+                <p id="passwordHint" class="validation-hint">Mínimo 6 caracteres.</p>
+                <div id="passwordError" class="hidden mt-2 p-3 rounded-lg bg-red-50 border border-red-200">
+                  <p class="validation-msg error"><i class="fa-solid fa-circle-xmark"></i> La contraseña debe tener al menos 6 caracteres.</p>
+                </div>
+                <div id="passwordSuccess" class="hidden mt-2 p-3 rounded-lg bg-green-50 border border-green-200">
+                  <p class="validation-msg success"><i class="fa-solid fa-circle-check"></i> Contraseña válida.</p>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between text-sm">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" class="rounded border-border text-primary focus:ring-primary">
+                  <span class="text-text-muted">Recordarme</span>
+                </label>
+                <a href="#" class="text-primary hover:text-primary-light transition-colors">Olvidé mi contraseña</a>
+              </div>
+
+              <button type="submit" class="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:bg-primary-light transition-all duration-200 active:scale-95 shadow-md hover:shadow-lg">
+                <i class="fa-solid fa-right-to-bracket mr-2"></i>Ingresar
+              </button>
+            </form>
+
+            <div class="mt-6 text-center text-xs text-text-muted">
+              <p>Sistema desarrollado para la industria yerbatera.</p>
+              <p class="mt-1">© 2025 S.G. Brazo Largo</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SIDEBAR (Visible after login) ==================== -->
+  <aside id="sidebar" class="sidebar fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-primary to-primary-dark text-white z-50 flex flex-col shadow-2xl hidden">
+    <!-- Logo area -->
+    <div class="p-6 border-b border-white/10">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
+          <i class="fa-solid fa-leaf text-accent text-xl"></i>
+        </div>
+        <div>
+          <h1 class="font-display text-xl font-bold leading-tight">Brazo Largo</h1>
+          <p class="text-xs text-white/60">Sistema de Gestión</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 py-4 overflow-y-auto">
+      <ul class="space-y-1 px-3">
+        <li>
+          <a href="#" onclick="showSection('dashboard'); return false;" class="nav-item active flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/10">
+            <i class="fa-solid fa-chart-line w-5 text-center"></i>
+            <span class="font-medium">Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" onclick="showSection('clientes'); return false;" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/10">
+            <i class="fa-solid fa-users w-5 text-center"></i>
+            <span class="font-medium">Clientes</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" onclick="showSection('registro-lote'); return false;" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/10">
+            <i class="fa-solid fa-plus-circle w-5 text-center"></i>
+            <span class="font-medium">Registrar Lote</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" onclick="showSection('listado-lotes'); return false;" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/10">
+            <i class="fa-solid fa-list-check w-5 text-center"></i>
+            <span class="font-medium">Listado de Lotes</span>
+          </a>
+        </li>
+        <li class="admin-only">
+          <a href="#" onclick="showSection('usuarios'); return false;" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/10">
+            <i class="fa-solid fa-user-shield w-5 text-center"></i>
+            <span class="font-medium">Usuarios</span>
+          </a>
+        </li>
+        <li class="admin-only">
+          <a href="#" onclick="showSection('ordenes-produccion'); return false;" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/10">
+            <i class="fa-solid fa-industry w-5 text-center"></i>
+            <span class="font-medium">Órdenes de Producción</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Bottom: User profile -->
+    <div class="p-4 border-t border-white/10">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 bg-accent/20 rounded-full flex items-center justify-center text-accent font-bold">
+          A
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium truncate">Admin</p>
+          <p class="text-xs text-white/60 truncate">Administrador</p>
+        </div>
+      </div>
+      <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all duration-200 text-sm">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>Cerrar Sesión</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Mobile Header (hamburger) -->
+  <div id="mobileHeader" class="mobile-header hidden fixed top-0 left-0 right-0 h-16 bg-primary text-white z-40 flex items-center justify-between px-4 lg:hidden">
+    <div class="flex items-center gap-3">
+      <button onclick="toggleSidebar()" class="p-2 hover:bg-white/10 rounded-lg transition-colors">
+        <i class="fa-solid fa-bars text-xl"></i>
+      </button>
+      <span class="font-display font-bold text-lg">Brazo Largo</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="p-2 hover:bg-white/10 rounded-lg transition-colors relative">
+        <i class="fa-solid fa-bell"></i>
+        <span class="absolute top-1 right-1 w-2 h-2 bg-accent rounded-full"></span>
+      </button>
+      <div class="w-8 h-8 bg-accent/20 rounded-full flex items-center justify-center text-accent font-bold text-sm">A</div>
+    </div>
+  </div>
+
+  <!-- ==================== MAIN CONTENT AREA ==================== -->
+  <main id="mainContent" class="main-content hidden lg:ml-64 min-h-screen">
+    <!-- Top Bar (Desktop) -->
+    <div class="hidden lg:flex items-center justify-between px-8 py-4 bg-white border-b border-border sticky top-0 z-30 shadow-sm">
+      <div>
+        <h2 id="pageTitle" class="font-display text-2xl font-bold text-primary">Dashboard</h2>
+        <p class="text-sm text-text-muted">Bienvenido de vuelta, Admin</p>
+      </div>
+      <div class="flex items-center gap-6">
+        <div class="text-right">
+          <p class="text-sm font-medium text-text-dark">09 de Junio, 2026</p>
+          <p class="text-xs text-text-muted">Martes</p>
+        </div>
+        <button class="relative p-2 rounded-lg hover:bg-gray-50 transition-colors">
+          <i class="fa-solid fa-bell text-text-muted text-lg"></i>
+          <span class="absolute top-1 right-1 w-2 h-2 bg-accent rounded-full"></span>
+        </button>
+        <div class="flex items-center gap-3 pl-6 border-l border-border">
+          <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold">A</div>
+          <div>
+            <p class="text-sm font-medium text-text-dark">Admin</p>
+            <p class="text-xs text-text-muted">Administrador</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile spacer -->
+    <div class="h-16 lg:hidden"></div>
+
+    <!-- Content Container -->
+    <div class="p-4 lg:p-8">
+
+      <!-- ==================== DASHBOARD SECTION ==================== -->
+      <section id="dashboard" class="space-y-6">
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Card 1 -->
+          <div class="bg-white rounded-xl shadow-md p-6 hover-lift border border-border">
+            <div class="flex items-center gap-4">
+              <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center">
+                <i class="fa-solid fa-boxes-stacked text-2xl text-primary"></i>
+              </div>
+              <div>
+                <p class="text-3xl font-bold text-text-dark">42</p>
+                <p class="text-sm text-text-muted">Lotes Activos</p>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2 text-sm">
+              <span class="text-green-600 flex items-center gap-1"><i class="fa-solid fa-arrow-trend-up"></i> +5%</span>
+              <span class="text-text-muted">vs mes anterior</span>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="bg-white rounded-xl shadow-md p-6 hover-lift border border-border">
+            <div class="flex items-center gap-4">
+              <div class="w-14 h-14 bg-secondary/10 rounded-xl flex items-center justify-center">
+                <i class="fa-solid fa-users text-2xl text-secondary"></i>
+              </div>
+              <div>
+                <p class="text-3xl font-bold text-text-dark">128</p>
+                <p class="text-sm text-text-muted">Clientes Registrados</p>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2 text-sm">
+              <span class="text-green-600 flex items-center gap-1"><i class="fa-solid fa-arrow-trend-up"></i> +12</span>
+              <span class="text-text-muted">nuevos este mes</span>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="bg-white rounded-xl shadow-md p-6 hover-lift border border-border">
+            <div class="flex items-center gap-4">
+              <div class="w-14 h-14 bg-accent/10 rounded-xl flex items-center justify-center">
+                <i class="fa-solid fa-weight-hanging text-2xl text-accent"></i>
+              </div>
+              <div>
+                <p class="text-3xl font-bold text-text-dark">15.200 <span class="text-lg font-normal text-text-muted">kg</span></p>
+                <p class="text-sm text-text-muted">Procesados Hoy</p>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2 text-sm">
+              <span class="text-accent flex items-center gap-1"><i class="fa-solid fa-bolt"></i> Meta: 20.000 kg</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kanban Board -->
+        <div class="bg-white rounded-xl shadow-md p-6 border border-border">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="font-display text-xl font-bold text-primary">Estado de Lotes</h3>
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-text-muted">Actualizado: hace 5 min</span>
+              <button class="p-2 rounded-lg hover:bg-gray-50 transition-colors text-text-muted">
+                <i class="fa-solid fa-rotate-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <!-- Column 1: Pendiente -->
+            <div class="bg-gray-50 rounded-xl p-4">
+              <div class="flex items-center gap-2 mb-4">
+                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <h4 class="font-semibold text-sm text-text-dark">Pendiente</h4>
+                <span class="ml-auto bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded-full font-medium">3</span>
+              </div>
+              <div class="space-y-3">
+                <div data-lote="2025-008" class="bg-white rounded-lg shadow-sm p-3 border border-border hover:shadow-md transition-shadow cursor-pointer">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="w-2 h-2 rounded-full bg-yellow-500"></span>
+                    <span class="text-xs font-semibold text-text-muted">Lote #2025-008</span>
+                  </div>
+                  <p class="text-sm font-medium text-text-dark mb-1">Cliente: <span class="text-primary hover:underline cursor-pointer" onclick="openClientDetail('María González')">María González</span></p>
+                  <p class="text-xs text-text-muted">8.500 kg</p>
+                  <p class="text-xs text-text-muted mt-1">Ingreso: 08/06/2026</p>
+                </div>
+                <div data-lote="2025-009" class="bg-white rounded-lg shadow-sm p-3 border border-border hover:shadow-md transition-shadow cursor-pointer">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="w-2 h-2 rounded-full bg-yellow-500"></span>
+                    <span class="text-xs font-semibold text-text-muted">Lote #2025-009</span>
+                  </div>
+                  <p class="text-sm font-medium text-text-dark mb-1">Cliente: <span class="text-primary hover:underline cursor-pointer" onclick="openClientDetail('Roberto Silva')">Roberto Silva</span></p>
+                  <p class="text-xs text-text-muted">12.300 kg</p>
+                  <p class="text-xs text-text-muted mt-1">Ingreso: 08/06/2026</p>
+                </div>
+                <div data-lote="2025-010" class="bg-white rounded-lg shadow-sm p-3 border border-border hover:shadow-md transition-shadow cursor-pointer">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="w-2 h-2 rounded-full bg-yellow-500"></span>
+                    <span class="text-xs font-semibold text-text-muted">Lote #2025-010</span>
+                  </div>
+                  <p class="text-sm font-medium text-text-dark mb-1">Cliente: <span class="text-primary hover:underline cursor-pointer" onclick="openClientDetail('Laura Fernández')">Laura Fernández</span></p>
+                  <p class="text-xs text-text-muted">5.700 kg</p>
+                  <p class="text-xs text-text-muted mt-1">Ingreso: 09/06/2026</p>
+                  <p class="text-sm font-medium text-text-dark mb-1">Cliente: <span class="text-primary hover:underline cursor-pointer" onclick="openClientDetail('Laura Fernández')">Laura Fernández</span></p>
+                  <p class="text-xs text-text-muted">5.700 kg</p>
+                  <p class="text-xs text-text-muted mt-1">Ingreso: 09/06/2026</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Column 2: Sapecado -->
+            <div class="bg-gray-50 rounded-xl p-4">
+              <div class="flex items-center gap-2 mb-4">
+                <div class="w-3 h-3 rounded-full bg-orange-500"></div>
+                <h4 class="font-semibold text-sm text-text-dark">Sapecado</h4>
+                <span class="ml-auto bg-orange-100 text-orange-700 text-xs px-2 py-1 rounded-full font-medium">2</span>
+              </div>
+              <div class="space-y-3">
+                <div data-lote="2025-006" class="bg-white rounded-lg shadow-sm p-3 border border-border hover:shadow-md transition-shadow cursor-pointer">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                    <span class="text-xs font-semibold text-text-muted">Lote #2025-006</span>
+                  </div>
+                  <p class="text-sm font-medium text-text-dark mb-1">Cliente: <span class="text-primary hover:underline cursor-pointer" onclick="openClientDetail('Carlos Martínez')">Carlos Martínez</span></p>
+                  <p class="text-xs text-text-muted">18.200 kg</p>
+                  <p class="text-xs text-text-muted mt-1">Inicio: 07/06/2026</p>
+                </div>
+                <div data-lote="2025-007" class="bg-white rounded-lg shadow-sm p-3 border border-border hover:shadow-md transition-shadow cursor-pointer">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                    <span class="text-xs font-semibold text-text-muted">Lote #2025-007</span>
+                  </div>
+                  <p class="text-sm font-medium text-text-dark mb-1">Cliente: <span class="text-primary hover:underline cursor-pointer" onclick="openClientDetail('Ana López')">Ana López</span></p>
+                  <p class="text-xs text-text-muted">9.800 kg</p>
+                  <p class="text-xs text-text-muted mt-1">Inicio: 08/06/2026</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Column 3: Secado -->
+            <div class="bg-gray-50 rounded-xl p-4">
+              <div class="flex items-center gap-2 mb-4">
+                <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                <h4 class="font-semibold text-sm text-text-dark">Secado</h4>
+                <span class="ml-auto bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium">4</span>
+              </div>
+              <div class="space-y-3">
+                <div data-lote="2025-003" class="bg-white rounded-lg shadow-sm p-3 border border-border hover:shadow-md transition-shadow cursor-pointer">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                    <span class="text-xs font-semibold text-text-muted">Lote #2025-003</span>
+                  </div>
+                  <p class="text-sm font-medium text-text-dark mb-1">Cliente: <span class="text-primary hover:underline cursor-pointer" onclick="openClientDetail('Pedro Sánchez')">Pedro Sánchez</span></p>
+                  <p class="text-xs text-text-muted">22.100 kg</p>
+                  <p class="text-xs text-text-muted mt-1">Inicio: 05/06/2026</p>
+                </div>
+                <div data-lote="2025-004" class="bg-white rounded-lg shadow-sm p-3 border border-border hover:shadow-md transition-shadow cursor-pointer">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                    <span class="text-xs font-semibold text-text-muted">Lote #2025-004</span>
+                  </div>
+                  <p class="text-sm font-medium text-text-dark mb-1">Cliente: <span class="text-primary hover:underline cursor-pointer" onclick="openClientDetail('Juan Pérez')">Juan Pérez</span></p>
+                  <p class="text-xs text-text-muted">15.200 kg</p>
+                  <p class="text-xs text-text-muted mt-1">Inicio: 06/06/2026</p>
+                </div>
+                <div data-lote="2025-005" class="bg-white rounded-lg shadow-sm p-3 border border-border hover:shadow-md transition-shadow cursor-pointer">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                    <span class="text-xs font-semibold text-text-muted">Lote #2025-005</span>
+                  </div>
+                  <p class="text-sm font-medium text-text-dark mb-1">Cliente: <span class="text-primary hover:underline cursor-pointer" onclick="openClientDetail('Diego Torres')">Diego Torres</span></p>
+                  <p class="text-xs text-text-muted">11.500 kg</p>
+                  <p class="text-xs text-text-muted mt-1">Inicio: 06/06/2026</p>
+                </div>
+                <div data-lote="2025-011" class="bg-white rounded-lg shadow-sm p-3 border border-border hover:shadow-md transition-shadow cursor-pointer">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                    <span class="text-xs font-semibold text-text-muted">Lote #2025-011</span>
+                  </div>
+                  <p class="text-sm font-medium text-text-dark mb-1">Cliente: <span class="text-primary hover:underline cursor-pointer" onclick="openClientDetail('Sofía Ramírez')">Sofía Ramírez</span></p>
+                  <p class="text-xs text-text-muted">14.000 kg</p>
+                  <p class="text-xs text-text-muted mt-1">Inicio: 09/06/2026</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Column 4: Molienda -->
+            <div class="bg-gray-50 rounded-xl p-4">
+              <div class="flex items-center gap-2 mb-4">
+                <div class="w-3 h-3 rounded-full bg-indigo-500"></div>
+                <h4 class="font-semibold text-sm text-text-dark">Molienda</h4>
+                <span class="ml-auto bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full font-medium">2</span>
+              </div>
+              <div class="space-y-3">
+                <div data-lote="2025-001" class="bg-white rounded-lg shadow-sm p-3 border border-border hover:shadow-md transition-shadow cursor-pointer">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                    <span class="text-xs font-semibold text-text-muted">Lote #2025-001</span>
+                  </div>
+                  <p class="text-sm font-medium text-text-dark mb-1">Cliente: <span class="text-primary hover:underline cursor-pointer" onclick="openClientDetail('Juan Pérez')">Juan Pérez</span></p>
+                  <p class="text-xs text-text-muted">15.200 kg</p>
+                  <p class="text-xs text-text-muted mt-1">Inicio: 02/06/2026</p>
+                </div>
+                <div data-lote="2025-002" class="bg-white rounded-lg shadow-sm p-3 border border-border hover:shadow-md transition-shadow cursor-pointer">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                    <span class="text-xs font-semibold text-text-muted">Lote #2025-002</span>
+                  </div>
+                  <p class="text-sm font-medium text-text-dark mb-1">Cliente: <span class="text-primary hover:underline cursor-pointer" onclick="openClientDetail('María González')">María González</span></p>
+                  <p class="text-xs text-text-muted">10.500 kg</p>
+                  <p class="text-xs text-text-muted mt-1">Inicio: 03/06/2026</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Column 5: Envío -->
+            <div class="bg-gray-50 rounded-xl p-4">
+              <div class="flex items-center gap-2 mb-4">
+                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                <h4 class="font-semibold text-sm text-text-dark">Envío</h4>
+                <span class="ml-auto bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full font-medium">1</span>
+              </div>
+              <div class="space-y-3">
+                <div data-lote="2024-089" class="bg-white rounded-lg shadow-sm p-3 border border-border hover:shadow-md transition-shadow cursor-pointer">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                    <span class="text-xs font-semibold text-text-muted">Lote #2024-089</span>
+                  </div>
+                  <p class="text-sm font-medium text-text-dark mb-1">Cliente: <span class="text-primary hover:underline cursor-pointer" onclick="openClientDetail('Carlos Martínez')">Carlos Martínez</span></p>
+                  <p class="text-xs text-text-muted">20.000 kg</p>
+                  <p class="text-xs text-text-muted mt-1">Listo para despacho</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== CLIENTES SECTION ==================== -->
+      <section id="clientes" class="hidden space-y-6">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="font-display text-2xl font-bold text-primary">Gestión de Clientes</h2>
+            <p class="text-sm text-text-muted mt-1">Administrar clientes registrados en el sistema</p>
+          </div>
+          <button onclick="resetClienteModal(); toggleModal('clienteModal')" class="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-light transition-all duration-200 active:scale-95 shadow-md flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i>
+            Nuevo Cliente
+          </button>
+        </div>
+
+        <!-- Search -->
+        <div class="bg-white rounded-xl shadow-sm border border-border p-4">
+          <div class="relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-text-muted"></i>
+            <input id="searchClientes" type="text" oninput="filtrarClientes()" class="w-full pl-10 pr-4 py-2 rounded-lg border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all text-sm" placeholder="Buscar por nombre, INYM, DNI o teléfono...">
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-white rounded-xl shadow-sm border border-border overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="bg-gray-50 border-b border-border">
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">ID</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Nombre</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">N° INYM</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Teléfono</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Estado</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="clientesTableBody" class="divide-y divide-border">
+                <tr class="hover:bg-gray-50 transition-colors" data-id="001" data-nombre="Juan" data-apellido="Pérez" data-inym="12345" data-dni="30123456" data-telefono="+54 3751 123456" data-email="juancito@email.com" data-direccion="Calle Falsa 123, Posadas, Misiones">
+                  <td class="px-6 py-4 text-sm text-text-muted">#001</td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold text-sm">JP</div>
+                      <div>
+                        <p class="text-sm font-medium text-text-dark">Juan Pérez</p>
+                        <p class="text-xs text-text-muted">juancito@email.com</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-text-dark font-medium">12345</td>
+                  <td class="px-6 py-4 text-sm text-text-muted">+54 3751 123456</td>
+                  <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Activo</span></td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-2">
+                      <button onclick="editCliente(this)" class="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                      <button onclick="deleteCliente(this)" class="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                      <button onclick="disableCliente(this)" class="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors" title="Deshabilitar"><i class="fa-solid fa-ban"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="hover:bg-gray-50 transition-colors" data-id="002" data-nombre="María" data-apellido="González" data-inym="12346" data-dni="31234567" data-telefono="+54 3751 234567" data-email="mgonzalez@email.com" data-direccion="Av. Siempre Viva 456, Posadas, Misiones">
+                  <td class="px-6 py-4 text-sm text-text-muted">#002</td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 bg-secondary/10 rounded-full flex items-center justify-center text-secondary font-bold text-sm">MG</div>
+                      <div>
+                        <p class="text-sm font-medium text-text-dark">María González</p>
+                        <p class="text-xs text-text-muted">mgonzalez@email.com</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-text-dark font-medium">12346</td>
+                  <td class="px-6 py-4 text-sm text-text-muted">+54 3751 234567</td>
+                  <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Activo</span></td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-2">
+                      <button onclick="editCliente(this)" class="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                      <button onclick="deleteCliente(this)" class="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                      <button onclick="disableCliente(this)" class="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors" title="Deshabilitar"><i class="fa-solid fa-ban"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="hover:bg-gray-50 transition-colors" data-id="003" data-nombre="Carlos" data-apellido="Martínez" data-inym="12347" data-dni="32345678" data-telefono="+54 3751 345678" data-email="cmartinez@email.com" data-direccion="Calle 123, Posadas, Misiones">
+                  <td class="px-6 py-4 text-sm text-text-muted">#003</td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center text-accent font-bold text-sm">CM</div>
+                      <div>
+                        <p class="text-sm font-medium text-text-dark">Carlos Martínez</p>
+                        <p class="text-xs text-text-muted">cmartinez@email.com</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-text-dark font-medium">12347</td>
+                  <td class="px-6 py-4 text-sm text-text-muted">+54 3751 345678</td>
+                  <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Activo</span></td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-2">
+                      <button onclick="editCliente(this)" class="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                      <button onclick="deleteCliente(this)" class="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                      <button onclick="disableCliente(this)" class="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors" title="Deshabilitar"><i class="fa-solid fa-ban"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="hover:bg-gray-50 transition-colors" data-id="004" data-nombre="Ana" data-apellido="López" data-inym="12348" data-dni="33456789" data-telefono="+54 3751 456789" data-email="alopez@email.com" data-direccion="Av. Principal 789, Posadas, Misiones">
+                  <td class="px-6 py-4 text-sm text-text-muted">#004</td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 font-bold text-sm">AL</div>
+                      <div>
+                        <p class="text-sm font-medium text-text-dark">Ana López</p>
+                        <p class="text-xs text-text-muted">alopez@email.com</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-text-dark font-medium">12348</td>
+                  <td class="px-6 py-4 text-sm text-text-muted">+54 3751 456789</td>
+                  <td class="px-6 py-4"><span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-medium">Inactivo</span></td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-2">
+                      <button onclick="editCliente(this)" class="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                      <button onclick="deleteCliente(this)" class="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                      <button onclick="disableCliente(this)" class="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors" title="Deshabilitar"><i class="fa-solid fa-ban"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="hover:bg-gray-50 transition-colors" data-id="005" data-nombre="Pedro" data-apellido="Sánchez" data-inym="12349" data-dni="34567890" data-telefono="+54 3751 567890" data-email="psanchez@email.com" data-direccion="Calle Secundaria 321, Posadas, Misiones">
+                  <td class="px-6 py-4 text-sm text-text-muted">#005</td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold text-sm">PS</div>
+                      <div>
+                        <p class="text-sm font-medium text-text-dark">Pedro Sánchez</p>
+                        <p class="text-xs text-text-muted">psanchez@email.com</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-text-dark font-medium">12349</td>
+                  <td class="px-6 py-4 text-sm text-text-muted">+54 3751 567890</td>
+                  <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Activo</span></td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-2">
+                      <button onclick="editCliente(this)" class="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                      <button onclick="deleteCliente(this)" class="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                      <button onclick="disableCliente(this)" class="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors" title="Deshabilitar"><i class="fa-solid fa-ban"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr id="noClientesRow" class="hidden">
+                  <td colspan="6" class="text-center py-8 text-gray-500">No se encontraron clientes con ese criterio</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Modal: Nuevo Cliente -->
+        <div id="clienteModal" class="fixed inset-0 z-50 hidden">
+          <div class="modal-overlay absolute inset-0" onclick="toggleModal('clienteModal')"></div>
+          <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative z-10">
+              <div class="p-6 border-b border-border flex items-center justify-between">
+                <h3 id="clienteModalTitle" class="font-display text-xl font-bold text-primary">Nuevo Cliente</h3>
+                <button onclick="toggleModal('clienteModal')" class="p-2 rounded-lg hover:bg-gray-100 transition-colors text-text-muted">
+                  <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+              </div>
+              <div class="p-6">
+                <div class="mb-4 p-3 bg-lightgreen/50 rounded-lg border border-primary/20">
+                  <p class="text-xs text-primary font-medium"><i class="fa-solid fa-circle-info mr-1"></i> Los campos marcados con <span class="text-red-600 font-bold">*</span> son obligatorios.</p>
+                </div>
+                <form class="space-y-6">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label class="block text-sm font-medium text-text-dark mb-2 required-field">Nombre</label>
+                      <input id="clienteNombre" type="text" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: Juan">
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-text-dark mb-2 required-field">Apellido</label>
+                      <input id="clienteApellido" type="text" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: Pérez">
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-text-dark mb-2 required-field">N° INYM</label>
+                      <input id="clienteINYM" type="text" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: 12345">
+                      <p class="validation-hint">Número de registro en el Instituto Nacional de la Yerba Mate.</p>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-text-dark mb-2 required-field">DNI</label>
+                      <input id="clienteDNI" type="text" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: 30123456">
+                      <p class="validation-hint">Sin puntos ni espacios.</p>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-text-dark mb-2 required-field">Teléfono</label>
+                      <input id="clienteTelefono" type="tel" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: +54 3751 123456">
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-text-dark mb-2 required-field">Email</label>
+                      <input id="clienteEmail" type="email" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: cliente@email.com">
+                      <p class="validation-hint">Ingrese un correo electrónico válido. Ej: nombre@dominio.com</p>
+                    </div>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-text-dark mb-2 required-field">Dirección</label>
+                    <input id="clienteDireccion" type="text" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: Calle Falsa 123, Posadas, Misiones">
+                  </div>
+                  <div class="flex items-center gap-3 pt-4 border-t border-border">
+                    <button type="button" onclick="toggleModal('clienteModal')" class="px-6 py-3 rounded-xl border border-border text-text-muted hover:bg-gray-50 transition-all font-medium">
+                      Cancelar
+                    </button>
+                    <button type="button" onclick="saveCliente()" class="px-6 py-3 rounded-xl bg-primary text-white hover:bg-primary-light transition-all font-medium shadow-md">
+                      <i class="fa-solid fa-save mr-2"></i>Guardar Cliente
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== REGISTRO DE LOTE SECTION ==================== -->
+      <section id="registro-lote" class="hidden space-y-6">
+        <div class="max-w-4xl mx-auto">
+          <div class="mb-6">
+            <h2 class="font-display text-2xl font-bold text-primary">Registro de Nuevo Lote</h2>
+            <p class="text-sm text-text-muted mt-1">Complete los datos para registrar un nuevo lote de yerba mate</p>
+          </div>
+
+          <div class="bg-white rounded-xl shadow-lg border border-border p-6 lg:p-8">
+            <div class="mb-4 p-3 bg-lightgreen/50 rounded-lg border border-primary/20">
+              <p class="text-xs text-primary font-medium"><i class="fa-solid fa-circle-info mr-1"></i> Los campos marcados con <span class="text-red-600 font-bold">*</span> son obligatorios.</p>
+            </div>
+            <form class="space-y-6">
+              <!-- Buscador de Cliente -->
+              <div>
+                <label class="block text-sm font-medium text-text-dark mb-2 required-field">Buscar Cliente</label>
+                <div class="relative">
+                  <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-text-muted"></i>
+                  <input type="text" value="Juan Pérez" class="w-full pl-12 pr-4 py-3 rounded-xl border border-primary focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Buscar por nombre o INYM...">
+                </div>
+                <!-- Simulated result -->
+                <div class="mt-3 p-4 border border-primary/30 rounded-xl bg-primary/5 flex items-center gap-3">
+                  <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold">JP</div>
+                  <div class="flex-1">
+                    <p class="text-sm font-medium text-text-dark">Juan Pérez</p>
+                    <p class="text-xs text-text-muted">INYM: 12345 | DNI: 30123456</p>
+                  </div>
+                  <i class="fa-solid fa-check-circle text-primary text-xl"></i>
+                </div>
+                <p class="validation-msg success"><i class="fa-solid fa-circle-check"></i> Cliente encontrado y verificado.</p>
+              </div>
+
+              <!-- Fecha de Ingreso -->
+              <div>
+                <label class="block text-sm font-medium text-text-dark mb-2 required-field">Fecha de Ingreso</label>
+                <input type="date" value="2026-06-09" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                <p class="validation-hint">Fecha en la que el lote ingresa a la planta de secado.</p>
+              </div>
+
+              <!-- Grid: Peso Bruto y Tara -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block text-sm font-medium text-text-dark mb-2 required-field">Peso Bruto (kg)</label>
+                  <div class="relative">
+                    <input type="number" id="registroPesoBruto" value="15700" min="0" step="0.001" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="0.000">
+                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-text-muted">kg</span>
+                  </div>
+                  <p class="validation-msg success"><i class="fa-solid fa-circle-check"></i> Peso válido.</p>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-text-dark mb-2 required-field">Peso Tara (kg)</label>
+                  <div class="relative">
+                    <input type="number" id="registroPesoTara" value="3250" min="0" step="0.001" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="0.000">
+                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-text-muted">kg</span>
+                  </div>
+                  <p class="validation-msg success"><i class="fa-solid fa-circle-check"></i> Tara válida (menor al peso bruto).</p>
+                </div>
+              </div>
+
+              <!-- Peso Neto Calculado -->
+              <div class="bg-accent/10 rounded-xl p-4 border border-accent/20">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-sm text-text-muted">Peso Neto Calculado</p>
+                    <p class="text-2xl font-bold text-accent">12.450 kg</p>
+                  </div>
+                  <div class="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center">
+                    <i class="fa-solid fa-calculator text-accent text-xl"></i>
+                  </div>
+                </div>
+                <p class="text-xs text-text-muted mt-2">Cálculo automático: Bruto - Tara</p>
+              </div>
+
+              <!-- Número de Lote Sugerido -->
+              <div>
+                <label class="block text-sm font-medium text-text-dark mb-2">Número de Lote</label>
+                <div class="relative">
+                  <input type="text" value="2026-042" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all bg-gray-50" readonly>
+                  <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-text-muted">Sugerido automáticamente</span>
+                </div>
+              </div>
+
+              <!-- Observaciones -->
+              <div>
+                <label class="block text-sm font-medium text-text-dark mb-2">Observaciones</label>
+                <textarea rows="3" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all resize-none" placeholder="Ingrese observaciones adicionales sobre el lote..."></textarea>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="flex flex-col sm:flex-row items-center gap-4 pt-4 border-t border-border">
+                <button type="button" onclick="registrarLote()" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-primary text-white font-semibold hover:bg-primary-light transition-all duration-200 active:scale-95 shadow-lg flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-floppy-disk"></i>
+                  Registrar Lote
+                </button>
+                <button type="button" onclick="generarComprobante('2026-042')" class="w-full sm:w-auto px-8 py-4 rounded-xl border-2 border-accent text-accent font-semibold hover:bg-accent/5 transition-all duration-200 active:scale-95 flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-file-lines"></i>
+                  Generar Comprobante
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== LISTADO DE LOTES SECTION ==================== -->
+      <section id="listado-lotes" class="hidden space-y-6">
+        <!-- Header & Filters -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div>
+            <h2 class="font-display text-2xl font-bold text-primary">Listado de Lotes</h2>
+            <p class="text-sm text-text-muted mt-1">Visualizar y filtrar todos los lotes registrados</p>
+          </div>
+        </div>
+
+        <!-- Filters Row -->
+        <div class="bg-white rounded-xl shadow-sm border border-border p-4">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="relative">
+              <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-text-muted"></i>
+              <input id="filterSearch" type="text" class="w-full pl-10 pr-4 py-2 rounded-lg border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all text-sm" placeholder="Buscar por cliente o lote...">
+            </div>
+            <select id="filterEtapa" class="w-full px-4 py-2 rounded-lg border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all text-sm bg-white">
+              <option value="">Todas las Etapas</option>
+              <option value="Pendiente">Pendiente</option>
+              <option value="Sapecado">Sapecado</option>
+              <option value="Secado">Secado</option>
+              <option value="Molienda">Molienda</option>
+              <option value="Envío">Envío</option>
+            </select>
+            <select id="filterFecha" class="w-full px-4 py-2 rounded-lg border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all text-sm bg-white">
+              <option value="">Filtrar por Fecha</option>
+              <option value="hoy">Hoy</option>
+              <option value="semana">Esta semana</option>
+              <option value="mes">Este mes</option>
+              <option value="2026">2026</option>
+              <option value="2025">2025</option>
+            </select>
+            <div class="flex gap-2">
+              <button onclick="applyFilters()" class="bg-secondary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary transition-all duration-200 text-sm flex items-center justify-center gap-2">
+                <i class="fa-solid fa-filter"></i>
+                Aplicar Filtros
+              </button>
+              <button onclick="clearFilters()" class="px-4 py-2 rounded-lg border border-border text-text-muted hover:bg-gray-50 transition-all text-sm flex items-center justify-center gap-2">
+                <i class="fa-solid fa-rotate-left"></i>
+                Limpiar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-white rounded-xl shadow-sm border border-border overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="bg-gray-50 border-b border-border">
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">N° Lote</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Cliente</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Fecha Ingreso</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Peso Neto (kg)</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Etapa Actual</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Estado</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-border" id="lotesTableBody">
+                <tr class="hover:bg-gray-50 transition-colors lot-row" data-lote="2026-042" data-cliente="Juan Pérez" data-etapa="Pendiente" data-fecha="2026-06-09">
+                  <td class="px-6 py-4 text-sm font-medium text-text-dark">#2026-042</td>
+                  <td class="px-6 py-4 text-sm text-text-dark">Juan Pérez</td>
+                  <td class="px-6 py-4 text-sm text-text-muted">09/06/2026</td>
+                  <td class="px-6 py-4 text-sm font-medium text-text-dark">12.450</td>
+                  <td class="px-6 py-4"><span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium">Pendiente</span></td>
+                  <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">En Proceso</span></td>
+</tr>
+                <tr class="hover:bg-gray-50 transition-colors lot-row" data-lote="2026-041" data-cliente="María González" data-etapa="Pendiente" data-fecha="2026-06-08">
+                  <td class="px-6 py-4 text-sm font-medium text-text-dark">#2026-041</td>
+                  <td class="px-6 py-4 text-sm text-text-dark">María González</td>
+                  <td class="px-6 py-4 text-sm text-text-muted">08/06/2026</td>
+                  <td class="px-6 py-4 text-sm font-medium text-text-dark">8.500</td>
+                  <td class="px-6 py-4"><span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium">Pendiente</span></td>
+                  <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">En Proceso</span></td>
+</tr>
+                <tr class="hover:bg-gray-50 transition-colors lot-row" data-lote="2026-040" data-cliente="Roberto Silva" data-etapa="Sapecado" data-fecha="2026-06-08">
+                  <td class="px-6 py-4 text-sm font-medium text-text-dark">#2026-040</td>
+                  <td class="px-6 py-4 text-sm text-text-dark">Roberto Silva</td>
+                  <td class="px-6 py-4 text-sm text-text-muted">08/06/2026</td>
+                  <td class="px-6 py-4 text-sm font-medium text-text-dark">12.300</td>
+                  <td class="px-6 py-4"><span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-medium">Sapecado</span></td>
+                  <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">En Proceso</span></td>
+</tr>
+                <tr class="hover:bg-gray-50 transition-colors lot-row" data-lote="2026-039" data-cliente="Carlos Martínez" data-etapa="Sapecado" data-fecha="2026-06-07">
+                  <td class="px-6 py-4 text-sm font-medium text-text-dark">#2026-039</td>
+                  <td class="px-6 py-4 text-sm text-text-dark">Carlos Martínez</td>
+                  <td class="px-6 py-4 text-sm text-text-muted">07/06/2026</td>
+                  <td class="px-6 py-4 text-sm font-medium text-text-dark">18.200</td>
+                  <td class="px-6 py-4"><span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-medium">Sapecado</span></td>
+                  <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">En Proceso</span></td>
+</tr>
+                <tr class="hover:bg-gray-50 transition-colors lot-row" data-lote="2026-038" data-cliente="Ana López" data-etapa="Secado" data-fecha="2026-06-07">
+                  <td class="px-6 py-4 text-sm font-medium text-text-dark">#2026-038</td>
+                  <td class="px-6 py-4 text-sm text-text-dark">Ana López</td>
+                  <td class="px-6 py-4 text-sm text-text-muted">07/06/2026</td>
+                  <td class="px-6 py-4 text-sm font-medium text-text-dark">9.800</td>
+                  <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">Secado</span></td>
+                  <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">En Proceso</span></td>
+</tr>
+                <tr class="hover:bg-gray-50 transition-colors lot-row" data-lote="2026-037" data-cliente="Pedro Sánchez" data-etapa="Secado" data-fecha="2026-06-06">
+                  <td class="px-6 py-4 text-sm font-medium text-text-dark">#2026-037</td>
+                  <td class="px-6 py-4 text-sm text-text-dark">Pedro Sánchez</td>
+                  <td class="px-6 py-4 text-sm text-text-muted">06/06/2026</td>
+                  <td class="px-6 py-4 text-sm font-medium text-text-dark">22.100</td>
+                  <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">Secado</span></td>
+                  <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">En Proceso</span></td>
+</tr>
+                <tr class="hover:bg-gray-50 transition-colors lot-row" data-lote="2026-036" data-cliente="Diego Torres" data-etapa="Molienda" data-fecha="2026-06-05">
+                  <td class="px-6 py-4 text-sm font-medium text-text-dark">#2026-036</td>
+                  <td class="px-6 py-4 text-sm text-text-dark">Diego Torres</td>
+                  <td class="px-6 py-4 text-sm text-text-muted">05/06/2026</td>
+                  <td class="px-6 py-4 text-sm font-medium text-text-dark">11.500</td>
+                  <td class="px-6 py-4"><span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-medium">Molienda</span></td>
+                  <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">En Proceso</span></td>
+</tr>
+                <tr class="hover:bg-gray-50 transition-colors lot-row" data-lote="2026-035" data-cliente="Laura Fernández" data-etapa="Molienda" data-fecha="2026-06-04">
+                  <td class="px-6 py-4 text-sm font-medium text-text-dark">#2026-035</td>
+                  <td class="px-6 py-4 text-sm text-text-dark">Laura Fernández</td>
+                  <td class="px-6 py-4 text-sm text-text-muted">04/06/2026</td>
+                  <td class="px-6 py-4 text-sm font-medium text-text-dark">14.000</td>
+                  <td class="px-6 py-4"><span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-medium">Molienda</span></td>
+                  <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Finalizado</span></td>
+</tr>
+                <tr class="hover:bg-gray-50 transition-colors lot-row" data-lote="2026-034" data-cliente="Sofía Ramírez" data-etapa="Envío" data-fecha="2026-06-03">
+                  <td class="px-6 py-4 text-sm font-medium text-text-dark">#2026-034</td>
+                  <td class="px-6 py-4 text-sm text-text-dark">Sofía Ramírez</td>
+                  <td class="px-6 py-4 text-sm text-text-muted">03/06/2026</td>
+                  <td class="px-6 py-4 text-sm font-medium text-text-dark">7.800</td>
+                  <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Envío</span></td>
+                  <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Finalizado</span></td>
+</tr>
+                <tr class="hover:bg-gray-50 transition-colors lot-row" data-lote="2026-033" data-cliente="Juan Pérez" data-etapa="Molienda" data-fecha="2026-06-02">
+                  <td class="px-6 py-4 text-sm font-medium text-text-dark">#2026-033</td>
+                  <td class="px-6 py-4 text-sm text-text-dark">Juan Pérez</td>
+                  <td class="px-6 py-4 text-sm text-text-muted">02/06/2026</td>
+                  <td class="px-6 py-4 text-sm font-medium text-text-dark">15.200</td>
+                  <td class="px-6 py-4"><span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-medium">Molienda</span></td>
+                  <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">En Proceso</span></td>
+</tr>
+                <tr id="noResultsRow" class="hidden">
+                  <td colspan="7" class="px-6 py-8 text-center text-sm text-text-muted">
+                    <i class="fa-solid fa-circle-info mr-2 text-text-muted"></i>No se encontraron lotes con los filtros seleccionados.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="px-6 py-4 border-t border-border flex items-center justify-between">
+            <p class="text-sm text-text-muted">Mostrando 1-10 de 42 lotes</p>
+            <div class="flex items-center gap-2">
+              <button class="w-8 h-8 rounded-lg border border-border hover:bg-gray-50 flex items-center justify-center text-text-muted transition-colors">
+                <i class="fa-solid fa-chevron-left text-sm"></i>
+              </button>
+              <button class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center text-sm font-medium">1</button>
+              <button class="w-8 h-8 rounded-lg border border-border hover:bg-gray-50 flex items-center justify-center text-text-muted transition-colors text-sm">2</button>
+              <button class="w-8 h-8 rounded-lg border border-border hover:bg-gray-50 flex items-center justify-center text-text-muted transition-colors text-sm">3</button>
+              <span class="text-text-muted">...</span>
+              <button class="w-8 h-8 rounded-lg border border-border hover:bg-gray-50 flex items-center justify-center text-text-muted transition-colors text-sm">5</button>
+              <button class="w-8 h-8 rounded-lg border border-border hover:bg-gray-50 flex items-center justify-center text-text-muted transition-colors">
+                <i class="fa-solid fa-chevron-right text-sm"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==================== USUARIOS SECTION ==================== -->
+      <section id="usuarios" class="hidden space-y-6">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="font-display text-2xl font-bold text-primary">Gestión de Usuarios</h2>
+            <p class="text-sm text-text-muted mt-1">Administrar usuarios del sistema y sus permisos</p>
+          </div>
+          <button onclick="resetUsuarioModal(); toggleModal('usuarioModal')" class="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-light transition-all duration-200 active:scale-95 shadow-md flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i>
+            Nuevo Usuario
+          </button>
+        </div>
+
+        <!-- Search -->
+        <div class="bg-white rounded-xl shadow-sm border border-border p-4">
+          <div class="relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-text-muted"></i>
+            <input id="searchUsuarios" type="text" oninput="filtrarUsuarios()" class="w-full pl-10 pr-4 py-2 rounded-lg border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all text-sm" placeholder="Buscar por nombre, usuario o rol...">
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-white rounded-xl shadow-sm border border-border overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="bg-gray-50 border-b border-border">
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">ID</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Usuario</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Nombre Completo</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Rol</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Estado</th>
+                  <th class="text-left px-6 py-4 text-sm font-semibold text-text-dark">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="usuariosTableBody" class="divide-y divide-border">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+          <div id="usuariosEmptyState" class="hidden text-center py-8 text-gray-500">
+            <i class="fa-solid fa-users-slash text-3xl mb-2"></i>
+            <p>No se encontraron usuarios</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== ÓRDENES DE PRODUCCIÓN SECTION ==================== -->
+      <section id="ordenes-produccion" class="hidden space-y-6">
+        <!-- Header -->
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="font-display text-2xl font-bold text-primary">Órdenes de Producción</h2>
+            <p class="text-sm text-text-muted mt-1">Gestión de órdenes y avance de etapas</p>
+          </div>
+          <button onclick="openCrearOrdenModal()" class="px-6 py-3 rounded-xl bg-primary text-white hover:bg-primary-light transition-all font-medium shadow-md flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i>Crear Orden
+          </button>
+        </div>
+
+        <!-- Buscador -->
+        <div class="bg-white rounded-xl shadow-lg border border-border p-4">
+          <div class="flex items-center gap-4">
+            <div class="relative flex-1">
+              <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-text-muted"></i>
+              <input type="text" id="searchOrdenes" oninput="filtrarOrdenes()" class="w-full pl-12 pr-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Buscar por ID o fecha...">
+            </div>
+          </div>
+        </div>
+
+        <!-- Listado de Órdenes -->
+        <div class="bg-white rounded-xl shadow-lg border border-border overflow-hidden">
+          <div class="p-6 border-b border-border">
+            <h3 class="font-display text-lg font-bold text-primary">Listado de Órdenes</h3>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-gray-50 border-b border-border">
+                <tr>
+                  <th class="text-left px-6 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider">ID</th>
+                  <th class="text-left px-6 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider">Fecha Inicio</th>
+                  <th class="text-left px-6 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider">Peso Total</th>
+                  <th class="text-left px-6 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider">Estado</th>
+                  <th class="text-left px-6 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider">Lotes</th>
+                  <th class="text-right px-6 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="ordenesTableBody" class="divide-y divide-border">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+          <div id="ordenesEmptyState" class="hidden text-center py-8 text-gray-500">
+            <i class="fa-solid fa-clipboard-list text-3xl mb-2"></i>
+            <p>No se encontraron órdenes</p>
+          </div>
+        </div>
+
+        <!-- Detalle de Orden Seleccionada -->
+        <div id="ordenDetailPanel" class="hidden bg-white rounded-xl shadow-lg border border-border p-6">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h3 class="font-display text-lg font-bold text-primary" id="detailOrdenId">Orden OP-001</h3>
+              <p class="text-sm text-text-muted" id="detailOrdenInfo">Fecha: 10/06/2025 | Peso: 15.200 kg</p>
+            </div>
+            <span id="detailOrdenEstado" class="px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">En proceso</span>
+          </div>
+
+          <!-- Lotes de la orden -->
+          <div class="mb-6">
+            <h4 class="text-sm font-semibold text-text-dark mb-3">Lotes incluidos <span class="text-xs font-normal text-text-muted">(seleccione los lotes a avanzar)</span></h4>
+            <div class="overflow-x-auto">
+              <table class="w-full border border-border rounded-lg">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="text-center px-4 py-2 text-xs font-semibold w-10">
+                      <input type="checkbox" id="selectAllLotes" onclick="toggleSelectAllLotes()" class="w-4 h-4 rounded border-border text-primary focus:ring-primary">
+                    </th>
+                    <th class="text-left px-4 py-2 text-xs font-semibold">N° Lote</th>
+                    <th class="text-left px-4 py-2 text-xs font-semibold">Cliente</th>
+                    <th class="text-right px-4 py-2 text-xs font-semibold">Peso</th>
+                    <th class="text-left px-4 py-2 text-xs font-semibold">Etapa Actual</th>
+                  </tr>
+                </thead>
+                <tbody id="ordenLotesTable" class="divide-y divide-border">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Avance de Etapa -->
+          <div class="bg-gray-50 rounded-xl p-4 border border-border">
+            <h4 class="text-sm font-semibold text-text-dark mb-3">Registrar Avance</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="block text-sm font-medium text-text-dark mb-1">Etapa a registrar</label>
+                <select id="etapaSelector" class="w-full px-4 py-2 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                  <option value="">Seleccionar...</option>
+                  <option value="sapecado">Sapecado</option>
+                  <option value="secado">Secado</option>
+                  <option value="molienda">Molienda</option>
+                  <option value="envio">Envío</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-text-dark mb-1">Peso al inicio de etapa (kg) <span class="text-red-500">*</span></label>
+                <input type="number" id="etapaPesoInicio" min="0" step="0.001" class="w-full px-4 py-2 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: 12450">
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="block text-sm font-medium text-text-dark mb-1">Fecha inicio</label>
+                <input type="date" id="etapaFechaInicio" class="w-full px-4 py-2 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-text-dark mb-1">Tiempo estimado (hs)</label>
+                <input type="number" id="etapaTiempo" class="w-full px-4 py-2 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: 4">
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <button onclick="registrarAvance()" class="px-6 py-2 rounded-xl bg-primary text-white hover:bg-primary-light transition-all font-medium shadow-md">
+                <i class="fa-solid fa-check mr-2"></i>Registrar Avance
+              </button>
+              <button onclick="registrarFinProceso()" id="btnFinProceso" class="px-6 py-2 rounded-xl bg-accent text-white hover:bg-accent-brown transition-all font-medium shadow-md">
+                <i class="fa-solid fa-flag-checkered mr-2"></i>Registrar Fin de Proceso
+              </button>
+              <button onclick="registrarEnvio()" id="btnRegistrarEnvio" class="px-6 py-2 rounded-xl bg-secondary text-white hover:bg-primary-light transition-all font-medium shadow-md">
+                <i class="fa-solid fa-truck mr-2"></i>Registrar Envío
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
+
+  <!-- Client Detail Modal -->
+  <div id="clientDetailModal" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" onclick="toggleModal('clientDetailModal')"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative z-10">
+        <div class="p-6 border-b border-border flex items-center justify-between">
+          <h3 class="font-display text-xl font-bold text-primary">Detalle del Cliente</h3>
+          <button onclick="toggleModal('clientDetailModal')" class="p-2 rounded-lg hover:bg-gray-100 transition-colors text-text-muted">
+            <i class="fa-solid fa-xmark text-xl"></i>
+          </button>
+        </div>
+        <div class="p-6">
+          <div id="clientDetailContent" class="space-y-6">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comprobante Preview Modal -->
+  <div id="comprobantePreviewModal" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" onclick="toggleModal('comprobantePreviewModal')"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto relative z-10">
+        <div class="comprobante-header p-6 border-b border-border flex items-center justify-between">
+          <h3 class="font-display text-xl font-bold text-primary">Vista Previa del Comprobante</h3>
+          <button onclick="toggleModal('comprobantePreviewModal')" class="p-2 rounded-lg hover:bg-gray-100 transition-colors text-text-muted">
+            <i class="fa-solid fa-xmark text-xl"></i>
+          </button>
+        </div>
+        <div class="p-6">
+          <div id="comprobantePreviewContent" class="paper-texture bg-white rounded-xl border border-border overflow-hidden">
+            <!-- Populated by JS -->
+          </div>
+          <div class="comprobante-actions mt-6 flex justify-center gap-4">
+            <button onclick="showToast('Descargando comprobante...', 'info'); setTimeout(() => showToast('Comprobante descargado exitosamente', 'success'), 2000);" class="px-6 py-3 rounded-xl bg-red-600 text-white hover:bg-red-700 active:bg-red-800 active:scale-95 transition-all font-medium shadow-md flex items-center gap-2">
+              <i class="fa-solid fa-file-pdf"></i>Descargar PDF
+            </button>
+            <button onclick="window.print()" class="px-6 py-3 rounded-xl bg-gray-700 text-white hover:bg-gray-800 active:bg-gray-900 active:scale-95 transition-all font-medium shadow-md flex items-center gap-2">
+              <i class="fa-solid fa-print"></i>Imprimir
+            </button>
+            <button onclick="toggleModal('comprobantePreviewModal')" class="px-6 py-3 rounded-xl border border-border text-text-muted hover:bg-gray-50 active:bg-gray-100 active:scale-95 transition-all font-medium flex items-center gap-2">
+              <i class="fa-solid fa-xmark"></i>Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trazabilidad Modal (reusable) -->
+  <div id="trazabilidadModal" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" onclick="toggleModal('trazabilidadModal')"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto relative z-10">
+        <div class="p-6 border-b border-border flex items-center justify-between sticky top-0 bg-white rounded-t-2xl">
+          <div>
+            <h3 id="trazModalTitle" class="font-display text-xl font-bold text-primary"></h3>
+            <p id="trazModalCliente" class="text-sm text-text-muted"></p>
+          </div>
+          <button onclick="toggleModal('trazabilidadModal')" class="p-2 rounded-lg hover:bg-gray-100 transition-colors text-text-muted">
+            <i class="fa-solid fa-xmark text-xl"></i>
+          </button>
+        </div>
+        <div class="p-6">
+          <div id="trazModalContent" class="space-y-4"></div>
+        </div>
+        <div class="p-6 border-t border-border flex items-center justify-end gap-3 sticky bottom-0 bg-white rounded-b-2xl">
+          <button onclick="toggleModal('trazabilidadModal'); generarComprobante(window.currentTraceLot)" class="px-6 py-3 rounded-xl bg-primary text-white hover:bg-primary-light transition-all font-medium shadow-md flex items-center gap-2 active:scale-95">
+            <i class="fa-solid fa-file-pdf"></i>Generar Comprobante
+          </button>
+          <button onclick="toggleModal('trazabilidadModal')" class="px-6 py-3 rounded-xl border border-border text-text-muted hover:bg-gray-50 transition-all font-medium">
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Modal (reemplaza confirm() nativo) -->
+  <div id="confirmModal" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" onclick="confirmModalNo()"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md relative z-10">
+        <div class="p-6 text-center">
+          <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fa-solid fa-triangle-exclamation text-2xl text-amber-600"></i>
+          </div>
+          <h3 class="font-display text-xl font-bold text-primary mb-2">Confirmar acción</h3>
+          <p id="confirmModalMessage" class="text-text-muted mb-6">¿Está seguro?</p>
+          <div class="flex justify-center gap-3">
+            <button onclick="confirmModalNo()" class="px-6 py-2 rounded-xl border border-border text-text-muted hover:bg-gray-50 transition-all font-medium">Cancelar</button>
+            <button onclick="confirmModalYes()" class="px-6 py-2 rounded-xl bg-primary text-white hover:bg-primary-light transition-all font-medium shadow-md">Confirmar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Crear Orden Modal -->
+  <div id="crearOrdenModal" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" onclick="toggleModal('crearOrdenModal')"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative z-10">
+        <div class="p-6 border-b border-border flex items-center justify-between sticky top-0 bg-white rounded-t-2xl">
+          <h3 class="font-display text-xl font-bold text-primary">Crear Orden de Producción</h3>
+          <button onclick="toggleModal('crearOrdenModal')" class="p-2 rounded-lg hover:bg-gray-100 transition-colors text-text-muted">
+            <i class="fa-solid fa-xmark text-xl"></i>
+          </button>
+        </div>
+        <div class="p-6">
+          <p class="text-sm text-text-muted mb-4">Seleccione los lotes pendientes para formar la orden. El peso total debe ser de al menos 15.000 kg.</p>
+          <div class="bg-lightgreen/50 rounded-lg p-3 mb-4 border border-primary/20">
+            <p class="text-sm text-primary font-medium"><i class="fa-solid fa-weight-hanging mr-1"></i> Peso acumulado: <span id="pesoAcumulado" class="font-bold">0</span> kg</p>
+          </div>
+          <div id="lotesDisponiblesList" class="space-y-2 max-h-80 overflow-y-auto">
+            <!-- Checkboxes de lotes -->
+          </div>
+          <div class="mt-6 flex justify-end gap-3">
+            <button onclick="toggleModal('crearOrdenModal')" class="px-6 py-3 rounded-xl border border-border text-text-muted hover:bg-gray-50 transition-all font-medium">Cancelar</button>
+            <button onclick="confirmarCrearOrden()" class="px-6 py-3 rounded-xl bg-primary text-white hover:bg-primary-light transition-all font-medium shadow-md">Crear Orden</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Registrar Envío Modal (UC-15) -->
+  <div id="registrarEnvioModal" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" onclick="toggleModal('registrarEnvioModal')"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative z-10">
+        <div class="p-6 border-b border-border flex items-center justify-between">
+          <h3 class="font-display text-xl font-bold text-primary">Registrar Envío</h3>
+          <button onclick="toggleModal('registrarEnvioModal')" class="p-2 rounded-lg hover:bg-gray-100 transition-colors text-text-muted">
+            <i class="fa-solid fa-xmark text-xl"></i>
+          </button>
+        </div>
+        <div class="p-6 space-y-4">
+          <p class="text-sm text-text-muted">Seleccione los lotes en el panel de la orden y complete los datos del envío.</p>
+          <div>
+            <label class="block text-sm font-medium text-text-dark mb-1">Fecha de envío <span class="text-red-500">*</span></label>
+            <input type="date" id="envioFecha" class="w-full px-4 py-2 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-text-dark mb-1">Peso final real (kg) <span class="text-red-500">*</span></label>
+            <input type="number" id="envioPesoFinal" min="0" step="0.001" class="w-full px-4 py-2 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: 12450">
+            <p class="text-xs text-text-muted mt-1">Debe ser menor al peso inicial del lote.</p>
+          </div>
+          <div id="envioError" class="hidden bg-red-50 border border-red-200 rounded-lg p-3">
+            <p class="text-sm text-red-600"><i class="fa-solid fa-circle-exclamation mr-1"></i><span id="envioErrorMsg"></span></p>
+          </div>
+          <div class="flex justify-end gap-3 pt-2">
+            <button onclick="toggleModal('registrarEnvioModal')" class="px-6 py-3 rounded-xl border border-border text-text-muted hover:bg-gray-50 transition-all font-medium">Cancelar</button>
+            <button onclick="confirmarRegistrarEnvio()" class="px-6 py-3 rounded-xl bg-primary text-white hover:bg-primary-light transition-all font-medium shadow-md">Confirmar Envío</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Lote Modal (UC-09) -->
+  <div id="editLoteModal" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" onclick="toggleModal('editLoteModal')"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative z-10">
+        <div class="p-6 border-b border-border flex items-center justify-between">
+          <h3 class="font-display text-xl font-bold text-primary">Editar Lote <span id="editLoteId"></span></h3>
+          <button onclick="toggleModal('editLoteModal')" class="p-2 rounded-lg hover:bg-gray-100 transition-colors text-text-muted">
+            <i class="fa-solid fa-xmark text-xl"></i>
+          </button>
+        </div>
+        <div class="p-6 space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-text-dark mb-1">Peso Bruto (kg) <span class="text-red-500">*</span></label>
+            <input type="number" id="editPesoBruto" min="0" step="0.001" class="w-full px-4 py-2 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" oninput="calcularNetoEdicion()">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-text-dark mb-1">Peso Tara (kg) <span class="text-red-500">*</span></label>
+            <input type="number" id="editPesoTara" min="0" step="0.001" class="w-full px-4 py-2 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" oninput="calcularNetoEdicion()">
+          </div>
+          <div class="bg-accent/10 rounded-xl p-4 border border-accent/20">
+            <p class="text-sm text-text-muted">Peso Neto Calculado</p>
+            <p id="editPesoNetoDisplay" class="text-2xl font-bold text-accent">0.000 kg</p>
+          </div>
+          <p class="text-xs text-gray-500"><span class="text-red-500">*</span> Campos obligatorios</p>
+        </div>
+        <div class="p-6 border-t border-border flex justify-end gap-3">
+          <button onclick="toggleModal('editLoteModal')" class="px-6 py-2 rounded-xl border border-border text-text-muted hover:bg-gray-50 transition-all font-medium">Cancelar</button>
+          <button onclick="guardarCambiosLote()" class="px-6 py-2 rounded-xl bg-primary text-white hover:bg-primary-light transition-all font-medium shadow-md">Guardar Cambios</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Usuario Modal (Alta/Edición) -->
+  <div id="usuarioModal" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" onclick="toggleModal('usuarioModal')"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative z-10">
+        <div class="p-6 border-b border-border flex items-center justify-between">
+          <h3 id="usuarioModalTitle" class="font-display text-xl font-bold text-primary">Nuevo Usuario</h3>
+          <button onclick="toggleModal('usuarioModal')" class="p-2 rounded-lg hover:bg-gray-100 transition-colors text-text-muted">
+            <i class="fa-solid fa-xmark text-xl"></i>
+          </button>
+        </div>
+        <div class="p-6 space-y-4">
+          <input type="hidden" id="editingUsuarioId" value="">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-text-dark mb-2 required-field">Nombre</label>
+              <input id="usuarioNombre" type="text" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: Juan">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-text-dark mb-2 required-field">Apellido</label>
+              <input id="usuarioApellido" type="text" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: Pérez">
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-text-dark mb-2 required-field">Nombre de Usuario</label>
+            <input id="usuarioUsername" type="text" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Ej: jperez">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-text-dark mb-2 required-field">Contraseña</label>
+            <input id="usuarioPassword" type="password" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Mínimo 6 caracteres">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-text-dark mb-2 required-field">Rol</label>
+            <select id="usuarioRol" class="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-primary focus:border-primary transition-all bg-white">
+              <option value="">Seleccionar rol...</option>
+              <option value="Administrador">Administrador</option>
+              <option value="Administrador Comercial">Administrador Comercial</option>
+            </select>
+          </div>
+          <p class="text-xs text-gray-500"><span class="text-red-500">*</span> Campos obligatorios</p>
+        </div>
+        <div class="p-6 border-t border-border flex justify-end gap-3">
+          <button onclick="toggleModal('usuarioModal')" class="px-6 py-3 rounded-xl border border-border text-text-muted hover:bg-gray-50 transition-all font-medium">Cancelar</button>
+          <button onclick="guardarUsuario()" class="px-6 py-3 rounded-xl bg-primary text-white hover:bg-primary-light transition-all font-medium shadow-md">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT ==================== -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
